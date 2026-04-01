@@ -11,18 +11,12 @@ export function useClientSearch() {
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    if (!query.trim()) {
-      setResults([]);
-      setIsSearching(false);
-      return;
-    }
-
     setIsSearching(true);
     timerRef.current = setTimeout(async () => {
       const r = await searchClients(query);
       setResults(r);
       setIsSearching(false);
-    }, 200);
+    }, query.trim() ? 200 : 0);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);

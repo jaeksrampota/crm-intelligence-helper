@@ -58,7 +58,7 @@ export function SearchBar({ onSelectClient, selectedClientName, onClear }: Searc
         )}
       </div>
 
-      {showDropdown && query.trim() && (
+      {showDropdown && (
         <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-30 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150">
           {isSearching ? (
             <div className="px-3 py-3 text-xs text-gray-400 flex items-center gap-2">
