@@ -1,5 +1,5 @@
 import type { InsightProvider, ClientProfile, SalesTip } from '../types';
-import { isBirthdayWithinDays, isWithinDays } from '../utils/date-helpers';
+import { isBirthdayWithinDays, isWithinDays, daysAgoDate } from '../utils/date-helpers';
 import type { Language, Translations } from '../i18n/translations';
 import { translations } from '../i18n/translations';
 
@@ -10,8 +10,7 @@ const EXTERNAL_PENSION = ['čsob penzijní', 'csob penzijni', 'nn penzijní', 'c
 type RuleFn = (profile: ClientProfile, t: Translations['salesTips']) => SalesTip | null;
 
 function ruleR001(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
-  const ninetyDaysAgo = new Date();
-  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const ninetyDaysAgo = daysAgoDate(90);
   const intlTx = profile.transactions.filter(
     (tx) => tx.is_international && new Date(tx.timestamp) >= ninetyDaysAgo
   );
@@ -33,8 +32,7 @@ function ruleR001(profile: ClientProfile, t: Translations['salesTips']): SalesTi
 }
 
 function ruleR002(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
-  const ninetyDaysAgo = new Date();
-  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const ninetyDaysAgo = daysAgoDate(90);
   const ecomTx = profile.transactions.filter(
     (tx) => tx.merchant_category === 'e_commerce' && new Date(tx.timestamp) >= ninetyDaysAgo
   );
@@ -56,8 +54,7 @@ function ruleR002(profile: ClientProfile, t: Translations['salesTips']): SalesTi
 }
 
 function ruleR003(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
-  const ninetyDaysAgo = new Date();
-  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const ninetyDaysAgo = daysAgoDate(90);
   const partnerTx = profile.transactions.filter(
     (tx) => new Date(tx.timestamp) >= ninetyDaysAgo &&
       RB_PARTNER_MERCHANTS.some((m) => tx.merchant_name.toLowerCase().includes(m))

@@ -1,5 +1,6 @@
 import { behavioralEvents, products, transactions, interactions } from '../data';
 import type { BehavioralSignalsSummary, ChannelUsage } from '../types';
+import { daysAgoDate } from '../utils/date-helpers';
 
 export async function fetchBehavioralSignals(clientId: string): Promise<BehavioralSignalsSummary> {
   const events = behavioralEvents.filter((e) => e.client_id === clientId);
@@ -7,10 +8,8 @@ export async function fetchBehavioralSignals(clientId: string): Promise<Behavior
   const clientProducts = products.filter((p) => p.client_id === clientId);
   const clientInteractions = interactions.filter((i) => i.client_id === clientId);
 
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const ninetyDaysAgo = new Date();
-  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  const thirtyDaysAgo = daysAgoDate(30);
+  const ninetyDaysAgo = daysAgoDate(90);
 
   // Channel preference from events + interactions
   const channelCounts: Record<string, number> = {};

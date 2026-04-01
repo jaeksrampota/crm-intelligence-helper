@@ -89,3 +89,22 @@ export function isWithinDays(isoDate: string, days: number): boolean {
   const diffDays = diffMs / (1000 * 60 * 60 * 24);
   return diffDays >= 0 && diffDays <= days;
 }
+
+/** Returns a Date object for N days in the past (useful for filtering). */
+export function daysAgoDate(days: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d;
+}
+
+/** Compact relative time string: "now", "5m ago", "3h ago", "2d ago". */
+export function formatTimeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}

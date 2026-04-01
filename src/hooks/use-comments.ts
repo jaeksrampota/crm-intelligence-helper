@@ -12,8 +12,8 @@ function loadComments(): Comment[] {
   }
 }
 
-function saveComments(comments: Comment[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
+function saveComments(list: Comment[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 }
 
 export function useComments() {
@@ -22,17 +22,18 @@ export function useComments() {
   // Sync across hook instances via storage event
   useEffect(() => {
     const handler = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) {
-        setComments(loadComments());
-      }
+      if (e.key === STORAGE_KEY) setComments(loadComments());
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  const persist = useCallback((updated: Comment[]) => {
-    setComments(updated);
-    saveComments(updated);
+  const update = useCallback((fn: (prev: Comment[]) => Comment[]) => {
+    setComments((prev) => {
+      const next = fn(prev);
+      saveComments(next);
+      return next;
+    });
   }, []);
 
   const addComment = useCallback((data: {
@@ -49,27 +50,21 @@ export function useComments() {
       timestamp: new Date().toISOString(),
       status: 'open',
     };
-    const updated = [...loadComments(), comment];
-    persist(updated);
+    update((prev) => [...prev, comment]);
     return comment;
-  }, [persist]);
+  }, [update]);
 
   const updateComment = useCallback((id: string, updates: Partial<Pick<Comment, 'text' | 'category' | 'priority' | 'targetAudience'>>) => {
-    const current = loadComments();
-    const updated = current.map((c) => c.id === id ? { ...c, ...updates } : c);
-    persist(updated);
-  }, [persist]);
+    update((prev) => prev.map((c) => c.id === id ? { ...c, ...updates } : c));
+  }, [update]);
 
   const setStatus = useCallback((id: string, status: CommentStatus) => {
-    const current = loadComments();
-    const updated = current.map((c) => c.id === id ? { ...c, status } : c);
-    persist(updated);
-  }, [persist]);
+    update((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
+  }, [update]);
 
   const deleteComment = useCallback((id: string) => {
-    const current = loadComments();
-    persist(current.filter((c) => c.id !== id));
-  }, [persist]);
+    update((prev) => prev.filter((c) => c.id !== id));
+  }, [update]);
 
   const getCommentsByZone = useCallback((zoneId: ZoneId) => {
     return comments.filter((c) => c.zoneId === zoneId);
@@ -79,9 +74,9 @@ export function useComments() {
     comments,
     addComment,
     updateComment,
-    resolveComment: (id: string) => setStatus(id, 'resolved'),
-    rejectComment: (id: string) => setStatus(id, 'rejected'),
-    reopenComment: (id: string) => setStatus(id, 'open'),
+    resolveComment: useCallback((id: string) => setStatus(id, 'resolved'), [setStatus]),
+    rejectComment: useCallback((id: string) => setStatus(id, 'rejected'), [setStatus]),
+    reopenComment: useCallback((id: string) => setStatus(id, 'open'), [setStatus]),
     deleteComment,
     getCommentsByZone,
   };

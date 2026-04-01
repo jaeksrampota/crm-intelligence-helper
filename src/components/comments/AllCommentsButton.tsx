@@ -1,6 +1,5 @@
 import { MessagesSquare } from 'lucide-react';
 import { useTranslation } from '../../i18n';
-import { cn } from '../../utils/cn';
 
 interface AllCommentsButtonProps {
   openCount: number;
@@ -18,10 +17,7 @@ export function AllCommentsButton({ openCount, onClick }: AllCommentsButtonProps
     >
       <MessagesSquare size={14} />
       {openCount > 0 && (
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold',
-          'bg-rb-yellow text-rb-black',
-        )}>
+        <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold bg-rb-yellow text-rb-black">
           {openCount}
         </span>
       )}
