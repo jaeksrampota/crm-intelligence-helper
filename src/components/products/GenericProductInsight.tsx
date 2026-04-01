@@ -1,18 +1,13 @@
 import { FileText } from 'lucide-react';
 import type { Product, GenericProductParams } from '../../types';
 import { StatusIndicator } from '../shared/StatusIndicator';
-
-const TYPE_LABELS: Record<string, string> = {
-  mortgage: 'Mortgage',
-  consumer_loan: 'Consumer Loan',
-  insurance: 'Insurance',
-  pension: 'Pension',
-  investment: 'Investment',
-  savings_account: 'Savings Account',
-};
+import { useTranslation } from '../../i18n';
 
 export function GenericProductInsight({ product, onClick }: { product: Product; onClick: () => void }) {
   const p = product.key_params as GenericProductParams;
+  const { t } = useTranslation();
+
+  const typeLabel = t.products.types[product.product_type as keyof typeof t.products.types] || product.product_type;
 
   return (
     <div
@@ -22,9 +17,7 @@ export function GenericProductInsight({ product, onClick }: { product: Product; 
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           <FileText size={14} className="text-gray-600" />
-          <span className="text-xs font-semibold">
-            {TYPE_LABELS[product.product_type] || product.product_type}
-          </span>
+          <span className="text-xs font-semibold">{typeLabel}</span>
         </div>
         <StatusIndicator status={product.status} />
       </div>
@@ -36,7 +29,7 @@ export function GenericProductInsight({ product, onClick }: { product: Product; 
         </div>
       )}
       {p.renewal_date && (
-        <div className="text-[10px] text-gray-400 mt-0.5">Renewal: {p.renewal_date}</div>
+        <div className="text-[10px] text-gray-400 mt-0.5">{t.products.renewal} {p.renewal_date}</div>
       )}
     </div>
   );

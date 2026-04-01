@@ -4,12 +4,14 @@ import { BalanceTrend } from './BalanceTrend';
 import { InternationalActivity } from './InternationalActivity';
 import { DigitalEngagement } from './DigitalEngagement';
 import { OnlineShoppingPattern } from './OnlineShoppingPattern';
+import { useTranslation } from '../../i18n';
 
 export function BehaviorSignals({ signals }: { signals: BehavioralSignalsSummary }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-1 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Behavior</h2>
-      <div className="grid grid-cols-2 gap-1.5">
+      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.behavior.title}</h2>
+      <div className="grid grid-cols-2 gap-2">
         <div className="col-span-2">
           <ChannelPreference channels={signals.channel_preference} />
         </div>

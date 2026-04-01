@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { useClientSearch } from '../../hooks/use-client-search';
 import { SegmentBadge } from '../shared/SegmentBadge';
+import { useTranslation } from '../../i18n';
 
 interface SearchBarProps {
   onSelectClient: (clientId: string) => void;
@@ -13,6 +14,7 @@ export function SearchBar({ onSelectClient, selectedClientName, onClear }: Searc
   const { query, setQuery, results, isSearching } = useClientSearch();
   const [showDropdown, setShowDropdown] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -50,24 +52,27 @@ export function SearchBar({ onSelectClient, selectedClientName, onClear }: Searc
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            placeholder="Search client by name or ID..."
+            placeholder={t.search.placeholder}
             className="w-full px-3 py-2 text-sm bg-transparent outline-none"
           />
         )}
       </div>
 
       {showDropdown && query.trim() && (
-        <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-30 max-h-60 overflow-y-auto">
+        <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-30 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150">
           {isSearching ? (
-            <div className="px-3 py-2 text-xs text-gray-400">Searching...</div>
+            <div className="px-3 py-3 text-xs text-gray-400 flex items-center gap-2">
+              <div className="w-3 h-3 border-2 border-gray-300 border-t-rb-yellow rounded-full animate-spin" />
+              {t.search.searching}
+            </div>
           ) : results.length === 0 ? (
-            <div className="px-3 py-2 text-xs text-gray-400">No clients found</div>
+            <div className="px-3 py-3 text-xs text-gray-400">{t.search.noResults(query)}</div>
           ) : (
             results.map((client) => (
               <button
                 key={client.client_id}
                 onClick={() => handleSelect(client.client_id)}
-                className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                className="w-full text-left px-3 py-2.5 hover:bg-gray-50 flex items-center gap-2 transition-colors border-b border-gray-50 last:border-b-0"
               >
                 <span className="text-sm font-medium">{client.name}</span>
                 <SegmentBadge segment={client.segment} />

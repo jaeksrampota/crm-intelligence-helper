@@ -1,13 +1,15 @@
 import type { InsightProvider, ClientProfile, SalesTip } from '../types';
 import { isBirthdayWithinDays, isWithinDays } from '../utils/date-helpers';
+import type { Language, Translations } from '../i18n/translations';
+import { translations } from '../i18n/translations';
 
 const RB_PARTNER_MERCHANTS = ['rohlik.cz', 'datart', 'mall.cz', 'alza.cz', 'notino'];
 const EXTERNAL_INSURANCE = ['česká pojišťovna', 'ceska pojistovna', 'allianz', 'generali', 'kooperativa', 'uniqa'];
 const EXTERNAL_PENSION = ['čsob penzijní', 'csob penzijni', 'nn penzijní', 'conseq'];
 
-type RuleFn = (profile: ClientProfile) => SalesTip | null;
+type RuleFn = (profile: ClientProfile, t: Translations['salesTips']) => SalesTip | null;
 
-function ruleR001(profile: ClientProfile): SalesTip | null {
+function ruleR001(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
   const intlTx = profile.transactions.filter(
@@ -19,9 +21,9 @@ function ruleR001(profile: ClientProfile): SalesTip | null {
   if (intlTx.length > 0 && !hasTravelInsurance) {
     return {
       rule_id: 'R001',
-      headline: 'Client travels but has no travel insurance',
-      reasoning: `${intlTx.length} international card transactions in the last 90 days, no active travel insurance product.`,
-      suggested_action: 'Offer the travel insurance package with card coverage.',
+      headline: t.R001.headline,
+      reasoning: t.R001.reasoning(intlTx.length),
+      suggested_action: t.R001.action,
       priority: 'high',
       source: 'rules',
       confidence_score: null,
@@ -30,7 +32,7 @@ function ruleR001(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR002(profile: ClientProfile): SalesTip | null {
+function ruleR002(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
   const ecomTx = profile.transactions.filter(
@@ -42,9 +44,9 @@ function ruleR002(profile: ClientProfile): SalesTip | null {
   if (ecomTx.length > 5 && !hasCreditCard) {
     return {
       rule_id: 'R002',
-      headline: 'Frequent online shopper without a credit card',
-      reasoning: `${ecomTx.length} e-commerce transactions in the last 90 days, paying by debit card only.`,
-      suggested_action: 'Suggest a credit card with cashback on online purchases.',
+      headline: t.R002.headline,
+      reasoning: t.R002.reasoning(ecomTx.length),
+      suggested_action: t.R002.action,
       priority: 'medium',
       source: 'rules',
       confidence_score: null,
@@ -53,7 +55,7 @@ function ruleR002(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR003(profile: ClientProfile): SalesTip | null {
+function ruleR003(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
   const partnerTx = profile.transactions.filter(
@@ -66,9 +68,9 @@ function ruleR003(profile: ClientProfile): SalesTip | null {
   if (partnerTx.length > 0 && !rbClubActive) {
     return {
       rule_id: 'R003',
-      headline: 'Shops at RB partners but no RB Club',
-      reasoning: `${partnerTx.length} transactions at RB partner merchants without loyalty discounts activated.`,
-      suggested_action: 'Suggest enrolling in RB Club for partner discounts.',
+      headline: t.R003.headline,
+      reasoning: t.R003.reasoning(partnerTx.length),
+      suggested_action: t.R003.action,
       priority: 'medium',
       source: 'rules',
       confidence_score: null,
@@ -77,7 +79,7 @@ function ruleR003(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR004(profile: ClientProfile): SalesTip | null {
+function ruleR004(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const npsScores = profile.satisfaction_scores
     .filter((s) => s.survey_type === 'NPS')
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -93,9 +95,9 @@ function ruleR004(profile: ClientProfile): SalesTip | null {
   if (!referralOffered) {
     return {
       rule_id: 'R004',
-      headline: 'Satisfied client — suggest referral program',
-      reasoning: `NPS score of ${npsScores[0].score}. No referral offer in the last 6 months.`,
-      suggested_action: 'Present the MUM (Muj ucet, muj tip) referral program.',
+      headline: t.R004.headline,
+      reasoning: t.R004.reasoning(npsScores[0].score),
+      suggested_action: t.R004.action,
       priority: 'low',
       source: 'rules',
       confidence_score: null,
@@ -104,7 +106,7 @@ function ruleR004(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR005(profile: ClientProfile): SalesTip | null {
+function ruleR005(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const externalPayments = profile.transactions.filter(
     (tx) => tx.type === 'standing_order' && (
       EXTERNAL_INSURANCE.some((name) => tx.merchant_name.toLowerCase().includes(name)) ||
@@ -115,9 +117,9 @@ function ruleR005(profile: ClientProfile): SalesTip | null {
     const merchants = [...new Set(externalPayments.map((tx) => tx.merchant_name))].join(', ');
     return {
       rule_id: 'R005',
-      headline: 'Pays external insurance/pension provider',
-      reasoning: `Active standing orders to: ${merchants}. Potential consolidation opportunity.`,
-      suggested_action: 'Suggest reviewing and consolidating insurance/pension with RB products.',
+      headline: t.R005.headline,
+      reasoning: t.R005.reasoning(merchants),
+      suggested_action: t.R005.action,
       priority: 'medium',
       source: 'rules',
       confidence_score: null,
@@ -126,7 +128,7 @@ function ruleR005(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR006(profile: ClientProfile): SalesTip | null {
+function ruleR006(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const expiringCards = profile.products.filter(
     (p) => (p.product_type === 'debit_card' || p.product_type === 'credit_card') &&
       p.status === 'active' && p.expiry_date && isWithinDays(p.expiry_date, 30)
@@ -134,9 +136,9 @@ function ruleR006(profile: ClientProfile): SalesTip | null {
   if (expiringCards.length > 0) {
     return {
       rule_id: 'R006',
-      headline: 'Card expiring soon',
-      reasoning: `${expiringCards.length} card(s) expiring within 30 days.`,
-      suggested_action: 'Proactively discuss card renewal or upgrade to a premium card.',
+      headline: t.R006.headline,
+      reasoning: t.R006.reasoning(expiringCards.length),
+      suggested_action: t.R006.action,
       priority: 'high',
       source: 'rules',
       confidence_score: null,
@@ -145,7 +147,7 @@ function ruleR006(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR007(profile: ClientProfile): SalesTip | null {
+function ruleR007(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const currentAccount = profile.products.find((p) => p.product_type === 'current_account');
   if (!currentAccount || !('balance_history_30d' in currentAccount.key_params)) return null;
 
@@ -159,9 +161,9 @@ function ruleR007(profile: ClientProfile): SalesTip | null {
   if (dropPct > 0.3) {
     return {
       rule_id: 'R007',
-      headline: 'Significant balance drop detected',
-      reasoning: `Account balance decreased by ${Math.round(dropPct * 100)}% in the last 30 days.`,
-      suggested_action: 'Check if the client needs financial support or if there is a concern.',
+      headline: t.R007.headline,
+      reasoning: t.R007.reasoning(Math.round(dropPct * 100)),
+      suggested_action: t.R007.action,
       priority: 'high',
       source: 'rules',
       confidence_score: null,
@@ -170,7 +172,7 @@ function ruleR007(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR008(profile: ClientProfile): SalesTip | null {
+function ruleR008(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const hasLoan = profile.products.some(
     (p) => p.product_type === 'consumer_loan' && p.status === 'active'
   );
@@ -187,9 +189,9 @@ function ruleR008(profile: ClientProfile): SalesTip | null {
   if (growthPct > 0.05) {
     return {
       rule_id: 'R008',
-      headline: 'Credit profile improving — consider refinancing',
-      reasoning: 'Balance trend is growing while client has an active consumer loan.',
-      suggested_action: 'Suggest loan refinancing at a better interest rate.',
+      headline: t.R008.headline,
+      reasoning: t.R008.reasoning,
+      suggested_action: t.R008.action,
       priority: 'low',
       source: 'rules',
       confidence_score: null,
@@ -198,13 +200,13 @@ function ruleR008(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR009(profile: ClientProfile): SalesTip | null {
+function ruleR009(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   if (isBirthdayWithinDays(profile.client.date_of_birth, 7)) {
     return {
       rule_id: 'R009',
-      headline: 'Birthday approaching — personal greeting',
-      reasoning: 'Client\'s birthday is within the next 7 days.',
-      suggested_action: 'Wish the client a happy birthday. Consider a small gift or benefit.',
+      headline: t.R009.headline,
+      reasoning: t.R009.reasoning,
+      suggested_action: t.R009.action,
       priority: 'medium',
       source: 'rules',
       confidence_score: null,
@@ -213,7 +215,7 @@ function ruleR009(profile: ClientProfile): SalesTip | null {
   return null;
 }
 
-function ruleR010(profile: ClientProfile): SalesTip | null {
+function ruleR010(profile: ClientProfile, t: Translations['salesTips']): SalesTip | null {
   const hasOpenComplaint = profile.interactions.some((i) => !i.resolved);
   const npsScores = profile.satisfaction_scores
     .filter((s) => s.survey_type === 'NPS')
@@ -224,9 +226,9 @@ function ruleR010(profile: ClientProfile): SalesTip | null {
   if (hasOpenComplaint && declining) {
     return {
       rule_id: 'R010',
-      headline: 'Active complaint + declining satisfaction',
-      reasoning: 'Client has an unresolved complaint and satisfaction trend is declining. Handle with care.',
-      suggested_action: 'Acknowledge the issue first. Focus on resolution before any sales approach.',
+      headline: t.R010.headline,
+      reasoning: t.R010.reasoning,
+      suggested_action: t.R010.action,
       priority: 'high',
       source: 'rules',
       confidence_score: null,
@@ -240,10 +242,11 @@ const ALL_RULES: RuleFn[] = [ruleR001, ruleR002, ruleR003, ruleR004, ruleR005, r
 const PRIORITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 };
 
 export class RuleBasedSalesTipProvider implements InsightProvider<ClientProfile, SalesTip> {
-  generateInsights(clientData: ClientProfile): SalesTip[] {
+  generateInsights(clientData: ClientProfile, language?: Language): SalesTip[] {
+    const t = translations[language ?? 'en'].salesTips;
     const tips: SalesTip[] = [];
     for (const rule of ALL_RULES) {
-      const tip = rule(clientData);
+      const tip = rule(clientData, t);
       if (tip) tips.push(tip);
     }
     return tips

@@ -4,6 +4,7 @@ import { DebitCardInsight } from './DebitCardInsight';
 import { CreditCardInsight } from './CreditCardInsight';
 import { CurrentAccountInsight } from './CurrentAccountInsight';
 import { GenericProductInsight } from './GenericProductInsight';
+import { useTranslation } from '../../i18n';
 
 function ProductCard({ product, onClick }: { product: Product; onClick: () => void }) {
   switch (product.product_type) {
@@ -29,16 +30,17 @@ export function ProductCardsGrid({
   const active = products.filter((p) => p.status === 'active');
   const display = showAll ? active : active.slice(0, 4);
   const remaining = active.length - 4;
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-2 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Products</h2>
+      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products.title}</h2>
       {display.map((p) => (
         <ProductCard key={p.product_id} product={p} onClick={() => onProductClick(p.product_id)} />
       ))}
       {remaining > 0 && !showAll && (
         <button onClick={() => setShowAll(true)} className="text-xs text-blue-600 hover:underline">
-          +{remaining} more products
+          {t.products.moreProducts(remaining)}
         </button>
       )}
     </div>

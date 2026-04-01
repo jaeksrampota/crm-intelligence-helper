@@ -8,22 +8,23 @@ export function CreditGauge({ value, max }: { value: number; max: number }) {
 
   return (
     <div className="flex flex-col items-center">
-      <svg width="70" height="40" viewBox="0 0 70 40">
+      <svg width="80" height="45" viewBox="0 0 80 45">
         <path
-          d="M 5 35 A 30 30 0 0 1 65 35"
+          d="M 5 40 A 35 35 0 0 1 75 40"
           fill="none"
           stroke="#e5e7eb"
           strokeWidth="6"
           strokeLinecap="round"
         />
         <path
-          d="M 5 35 A 30 30 0 0 1 65 35"
+          d="M 5 40 A 35 35 0 0 1 75 40"
           fill="none"
           stroke={color}
           strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={`${circumference}`}
           strokeDashoffset={`${offset}`}
+          className="transition-all duration-500"
         />
       </svg>
       <span className="text-xs font-semibold -mt-1" style={{ color }}>

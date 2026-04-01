@@ -1,5 +1,7 @@
+import type { Language } from '../i18n/translations';
+
 export interface InsightProvider<TInput, TOutput> {
-  generateInsights(clientData: TInput): TOutput[];
+  generateInsights(clientData: TInput, language?: Language): TOutput[];
   getProviderType(): 'rules' | 'ml' | 'llm';
   getConfidenceScore(): number | null;
 }

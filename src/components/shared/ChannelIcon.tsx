@@ -1,5 +1,6 @@
 import { Building2, Phone, MessageSquare, Mail, Mic, Bot, Smartphone, Monitor } from 'lucide-react';
 import type { Channel } from '../../types';
+import { useTranslation } from '../../i18n';
 
 const ICONS: Record<Channel, React.ComponentType<{ size?: number; className?: string }>> = {
   branch: Building2,
@@ -12,18 +13,8 @@ const ICONS: Record<Channel, React.ComponentType<{ size?: number; className?: st
   internet_banking: Monitor,
 };
 
-const LABELS: Record<Channel, string> = {
-  branch: 'Branch',
-  call_center: 'Call Center',
-  chat: 'Chat',
-  email: 'Email',
-  voicebot: 'Voicebot',
-  chatbot: 'Chatbot',
-  mobile_app: 'Mobile App',
-  internet_banking: 'Internet Banking',
-};
-
 export function ChannelIcon({ channel, size = 16, className }: { channel: Channel; size?: number; className?: string }) {
   const Icon = ICONS[channel] || MessageSquare;
-  return <span title={LABELS[channel]}><Icon size={size} className={className} /></span>;
+  const { t } = useTranslation();
+  return <span title={t.channels[channel]}><Icon size={size} className={className} /></span>;
 }

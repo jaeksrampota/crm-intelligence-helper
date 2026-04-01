@@ -1,15 +1,23 @@
 import type { InsightProvider, ClientProfile, Alert } from '../types';
 import { isBirthdayWithinDays, isWithinDays, daysUntilBirthday } from '../utils/date-helpers';
+import type { Language } from '../i18n/translations';
+import { translations } from '../i18n/translations';
 
 export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Alert> {
   private nextId = 1;
+  private lang: Language = 'en';
 
   private makeId(): string {
     return `alert-${this.nextId++}`;
   }
 
-  generateInsights(clientData: ClientProfile): Alert[] {
+  private get t() {
+    return translations[this.lang].alerts;
+  }
+
+  generateInsights(clientData: ClientProfile, language?: Language): Alert[] {
     this.nextId = 1;
+    if (language) this.lang = language;
     const alerts: Alert[] = [];
 
     // Birthday within 7 days
@@ -18,7 +26,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
       alerts.push({
         id: this.makeId(),
         type: 'birthday',
-        message: days <= 1 ? 'Birthday is tomorrow!' : `Birthday in ${days} days`,
+        message: days <= 1 ? this.t.birthdayTomorrow : this.t.birthdayIn(days),
         severity: 'info',
         related_zone: 'header',
         dismissed: false,
@@ -34,7 +42,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
       alerts.push({
         id: this.makeId(),
         type: 'expiring_card',
-        message: `${card.product_name} expires soon`,
+        message: this.t.cardExpires(card.product_name),
         severity: 'warning',
         related_zone: 'products',
         dismissed: false,
@@ -53,7 +61,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
           alerts.push({
             id: this.makeId(),
             type: 'balance_drop',
-            message: `Balance dropped ${Math.round(dropPct * 100)}% in 30 days`,
+            message: this.t.balanceDrop(Math.round(dropPct * 100)),
             severity: 'critical',
             related_zone: 'behavior',
             dismissed: false,
@@ -68,7 +76,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
       alerts.push({
         id: this.makeId(),
         type: 'complaint',
-        message: `${openComplaints.length} unresolved complaint(s)`,
+        message: this.t.unresolvedComplaints(openComplaints.length),
         severity: 'critical',
         related_zone: 'activity',
         dismissed: false,
@@ -80,7 +88,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
       alerts.push({
         id: this.makeId(),
         type: 'gdpr_warning',
-        message: 'GDPR consent expired',
+        message: this.t.gdprExpired,
         severity: 'warning',
         related_zone: 'header',
         dismissed: false,
@@ -89,7 +97,7 @@ export class RuleBasedAlertProvider implements InsightProvider<ClientProfile, Al
       alerts.push({
         id: this.makeId(),
         type: 'gdpr_warning',
-        message: 'No GDPR consent on file',
+        message: this.t.gdprNoConsent,
         severity: 'critical',
         related_zone: 'header',
         dismissed: false,

@@ -12,39 +12,48 @@ import { ProductDetailPanel } from './components/slideout/ProductDetailPanel';
 import { InteractionDetailPanel } from './components/slideout/InteractionDetailPanel';
 import { useClientDashboard } from './hooks/use-client-dashboard';
 import { useSlideout } from './hooks/use-slideout';
+import { useTranslation } from './i18n';
 
 export default function App() {
   const [clientId, setClientId] = useState<string | null>(null);
   const { profile, salesTips, alerts, behavioralSignals, isLoading, dismissAlert } = useClientDashboard(clientId);
   const slideout = useSlideout();
+  const { t, language, toggleLanguage } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top bar with search */}
       <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-4 h-14">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-rb-yellow rounded" />
-          <span className="font-bold text-sm">CRM Intelligence</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <img src={import.meta.env.BASE_URL + 'rb-icon.svg'} alt="Raiffeisenbank" className="w-7 h-7" />
+          <span className="font-bold text-sm">{t.app.brandName}</span>
         </div>
         <SearchBar
           onSelectClient={setClientId}
           selectedClientName={profile?.client.name}
           onClear={() => setClientId(null)}
         />
+        <button
+          onClick={toggleLanguage}
+          className="ml-auto shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors text-xs font-semibold"
+          title={language === 'en' ? 'Přepnout do češtiny' : 'Switch to English'}
+        >
+          <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
+          <span className="text-gray-300">|</span>
+          <span className={language === 'cs' ? 'opacity-100' : 'opacity-40'}>CZ</span>
+        </button>
       </div>
 
       {/* Content */}
       {!clientId ? (
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-56px)] gap-4">
-          <div className="w-16 h-16 bg-rb-yellow rounded-xl flex items-center justify-center">
-            <span className="text-2xl font-bold">RB</span>
-          </div>
-          <h1 className="text-xl font-bold text-gray-700">CRM Intelligence Helper</h1>
-          <p className="text-sm text-gray-500">Search for a client to begin</p>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-56px)] gap-5">
+          <img src={import.meta.env.BASE_URL + 'rb-logo.svg'} alt="Raiffeisenbank" className="h-12" />
+          <h1 className="text-xl font-bold text-gray-700">{t.app.title}</h1>
+          <p className="text-sm text-gray-500">{t.app.searchPrompt}</p>
         </div>
       ) : isLoading ? (
         <div className="flex items-center justify-center h-[calc(100vh-56px)]">
-          <div className="text-sm text-gray-500">Loading client data...</div>
+          <div className="text-sm text-gray-500">{t.app.loadingClient}</div>
         </div>
       ) : profile && behavioralSignals ? (
         <DashboardLayout
@@ -61,7 +70,7 @@ export default function App() {
       <SlideoutPanel
         isOpen={slideout.isOpen}
         onClose={slideout.close}
-        title={slideout.contentType === 'product' ? 'Product Detail' : 'Interaction Detail'}
+        title={slideout.contentType === 'product' ? t.app.productDetail : t.app.interactionDetail}
       >
         {slideout.contentType === 'product' && slideout.contentId && (
           <ProductDetailPanel productId={slideout.contentId} />

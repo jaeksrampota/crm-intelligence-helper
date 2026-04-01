@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { useTranslation } from '../../i18n';
 
 interface SlideoutPanelProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface SlideoutPanelProps {
 }
 
 export function SlideoutPanel({ isOpen, onClose, title, children }: SlideoutPanelProps) {
+  const { t } = useTranslation();
   return (
     <>
       {/* Overlay */}
@@ -28,7 +30,7 @@ export function SlideoutPanel({ isOpen, onClose, title, children }: SlideoutPane
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <h2 className="text-sm font-semibold">{title}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-md transition-colors" title={t.slideout.closePanel}>
             <X size={18} />
           </button>
         </div>

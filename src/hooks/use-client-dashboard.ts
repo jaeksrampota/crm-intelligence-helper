@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import type { ClientProfile, BehavioralSignalsSummary, SalesTip, Alert } from '../types';
 import {
   fetchClient,
@@ -11,6 +11,7 @@ import {
 import { getSalesTips, getAlerts } from '../providers';
 import { satisfactionScores } from '../data';
 import { behavioralEvents } from '../data';
+import { LanguageContext } from '../i18n';
 
 export function useClientDashboard(clientId: string | null) {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -19,6 +20,7 @@ export function useClientDashboard(clientId: string | null) {
   const [behavioralSignals, setBehavioralSignals] = useState<BehavioralSignalsSummary | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { language } = useContext(LanguageContext);
 
   useEffect(() => {
     if (!clientId) {
@@ -63,8 +65,8 @@ export function useClientDashboard(clientId: string | null) {
           satisfaction_scores: satisfactionScores.filter((s) => s.client_id === clientId),
         };
 
-        const tips = getSalesTips(clientProfile);
-        const alertsList = getAlerts(clientProfile);
+        const tips = getSalesTips(clientProfile, language);
+        const alertsList = getAlerts(clientProfile, language);
 
         setProfile(clientProfile);
         setSalesTips(tips);
@@ -86,7 +88,15 @@ export function useClientDashboard(clientId: string | null) {
     return () => {
       cancelled = true;
     };
-  }, [clientId]);
+  }, [clientId, language]);
+
+  // Re-generate tips and alerts when language changes (without re-fetching)
+  useEffect(() => {
+    if (profile) {
+      setSalesTips(getSalesTips(profile, language));
+      setAlerts(getAlerts(profile, language));
+    }
+  }, [language, profile]);
 
   const dismissAlert = (alertId: string) => {
     setAlerts((prev) => prev.map((a) => (a.id === alertId ? { ...a, dismissed: true } : a)));
