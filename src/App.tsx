@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { LogOut } from 'lucide-react';
+import { LogOut, Globe } from 'lucide-react';
 import { SearchBar } from './components/layout/SearchBar';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { ClientHeader } from './components/header/ClientHeader';
@@ -16,6 +16,7 @@ import { SatisfactionDetailPanel } from './components/slideout/SatisfactionDetai
 import { LoginPage } from './components/auth/LoginPage';
 import { AllCommentsButton } from './components/comments/AllCommentsButton';
 import { CommentSummaryPanel } from './components/comments/CommentSummaryPanel';
+import { CommentableElement } from './components/comments/CommentableElement';
 import { useClientDashboard } from './hooks/use-client-dashboard';
 import { useSlideout } from './hooks/use-slideout';
 import { useAuth } from './hooks/use-auth';
@@ -73,6 +74,7 @@ export default function App() {
             className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors text-xs font-semibold"
             title={language === 'en' ? 'Přepnout do češtiny' : 'Switch to English'}
           >
+            <Globe size={12} className="text-gray-400" />
             <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
             <span className="text-gray-300">|</span>
             <span className={language === 'cs' ? 'opacity-100' : 'opacity-40'}>CZ</span>
@@ -83,6 +85,7 @@ export default function App() {
             title={t.login.logout}
           >
             <LogOut size={14} />
+            <span className="hidden sm:inline">{t.login.logout}</span>
           </button>
         </div>
       </div>
@@ -100,8 +103,16 @@ export default function App() {
         </div>
       ) : profile && behavioralSignals ? (
         <DashboardLayout
-          header={<ClientHeader client={profile.client} interactions={profile.interactions} onInteractionClick={slideout.openInteractionDetail} />}
-          alerts={<AlertsBar alerts={alerts} onDismiss={dismissAlert} onNavigate={scrollToZone} />}
+          header={
+            <CommentableElement zoneId="header" elementId="client-header" elementLabel={profile.client.name}>
+              <ClientHeader client={profile.client} interactions={profile.interactions} onInteractionClick={slideout.openInteractionDetail} />
+            </CommentableElement>
+          }
+          alerts={
+            <CommentableElement zoneId="alerts" elementId="alerts-bar" elementLabel={t.comments.zoneAlerts}>
+              <AlertsBar alerts={alerts} onDismiss={dismissAlert} onNavigate={scrollToZone} />
+            </CommentableElement>
+          }
           products={<ProductCardsGrid products={profile.products} onProductClick={slideout.openProductDetail} />}
           activity={<ActivityTimeline interactions={profile.interactions} onInteractionClick={slideout.openInteractionDetail} />}
           behavior={

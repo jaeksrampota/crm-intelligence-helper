@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Interaction } from '../../types';
 import { InteractionEntry } from './InteractionEntry';
+import { CommentableElement } from '../comments/CommentableElement';
 import { useTranslation } from '../../i18n';
 
 export function ActivityTimeline({ interactions, onInteractionClick }: { interactions: Interaction[]; onInteractionClick: (id: string) => void }) {
@@ -10,15 +11,18 @@ export function ActivityTimeline({ interactions, onInteractionClick }: { interac
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-1 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.activity.title}</h2>
+    <div className="space-y-2 overflow-y-auto">
+      <CommentableElement zoneId="activity" elementLabel={t.activity.title}>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.activity.title}</h2>
+      </CommentableElement>
       <div className="space-y-1">
         {display.map((interaction) => (
-          <InteractionEntry
-            key={interaction.interaction_id}
-            interaction={interaction}
-            onClick={() => onInteractionClick(interaction.interaction_id)}
-          />
+          <CommentableElement key={interaction.interaction_id} zoneId="activity" elementId={`interaction-${interaction.interaction_id}`} elementLabel={interaction.topic_summary?.slice(0, 50) || 'Interaction'}>
+            <InteractionEntry
+              interaction={interaction}
+              onClick={() => onInteractionClick(interaction.interaction_id)}
+            />
+          </CommentableElement>
         ))}
       </div>
       {remaining > 0 && !showAll && (

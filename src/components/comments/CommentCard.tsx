@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Check, XCircle, RotateCcw, Pencil, Trash2 } from 'lucide-react';
 import type { Comment } from '../../types/comment';
 import { useTranslation } from '../../i18n';
@@ -30,6 +31,14 @@ export function CommentCard({ comment, onEdit, onResolve, onReject, onReopen, on
   const { t } = useTranslation();
   const tc = t.comments;
   const isOpen = comment.status === 'open';
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+
+  // Auto-revert delete confirmation after 3 seconds
+  useEffect(() => {
+    if (!confirmingDelete) return;
+    const timer = setTimeout(() => setConfirmingDelete(false), 3000);
+    return () => clearTimeout(timer);
+  }, [confirmingDelete]);
 
   return (
     <div className={cn(
@@ -65,27 +74,47 @@ export function CommentCard({ comment, onEdit, onResolve, onReject, onReopen, on
           {comment.author} &middot; {formatTimeAgo(comment.timestamp)}
         </span>
         <div className="flex items-center gap-1">
-          {isOpen && (
+          {confirmingDelete ? (
+            <div className="flex items-center gap-1 text-[10px]">
+              <span className="text-red-600 font-medium">{tc.deleteConfirm || 'Delete?'}</span>
+              <button
+                onClick={() => onDelete(comment.id)}
+                className="px-1.5 py-0.5 rounded bg-red-500 text-white font-medium hover:bg-red-600"
+              >
+                {tc.deleteYes || 'Yes'}
+              </button>
+              <button
+                onClick={() => setConfirmingDelete(false)}
+                className="px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 font-medium hover:bg-gray-300"
+              >
+                {tc.cancel}
+              </button>
+            </div>
+          ) : (
             <>
-              <button onClick={() => onEdit(comment)} className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" title={tc.editComment}>
-                <Pencil size={13} />
-              </button>
-              <button onClick={() => onResolve(comment.id)} className="p-1 rounded hover:bg-green-50 text-gray-400 hover:text-green-600" title={tc.resolve}>
-                <Check size={13} />
-              </button>
-              <button onClick={() => onReject(comment.id)} className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-600" title={tc.reject}>
-                <XCircle size={13} />
+              {isOpen && (
+                <>
+                  <button onClick={() => onEdit(comment)} className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" title={tc.editComment}>
+                    <Pencil size={13} />
+                  </button>
+                  <button onClick={() => onResolve(comment.id)} className="p-1 rounded hover:bg-green-50 text-gray-400 hover:text-green-600" title={tc.resolve}>
+                    <Check size={13} />
+                  </button>
+                  <button onClick={() => onReject(comment.id)} className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-600" title={tc.reject}>
+                    <XCircle size={13} />
+                  </button>
+                </>
+              )}
+              {!isOpen && (
+                <button onClick={() => onReopen(comment.id)} className="p-1 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600" title={tc.reopen}>
+                  <RotateCcw size={13} />
+                </button>
+              )}
+              <button onClick={() => setConfirmingDelete(true)} className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500" title={tc.delete}>
+                <Trash2 size={13} />
               </button>
             </>
           )}
-          {!isOpen && (
-            <button onClick={() => onReopen(comment.id)} className="p-1 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600" title={tc.reopen}>
-              <RotateCcw size={13} />
-            </button>
-          )}
-          <button onClick={() => onDelete(comment.id)} className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500" title={tc.delete}>
-            <Trash2 size={13} />
-          </button>
         </div>
       </div>
     </div>

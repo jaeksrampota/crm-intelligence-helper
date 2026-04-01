@@ -16,8 +16,9 @@ export function AllCommentsButton({ openCount, onClick }: AllCommentsButtonProps
       title={t.comments.allComments}
     >
       <MessagesSquare size={14} />
+      <span className="hidden sm:inline">{t.comments.allComments}</span>
       {openCount > 0 && (
-        <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold bg-rb-yellow text-rb-black">
+        <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold bg-red-500 text-white">
           {openCount}
         </span>
       )}

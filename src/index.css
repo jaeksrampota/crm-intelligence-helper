@@ -27,3 +27,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-400;
 }
+
+/* Touch device fallback: show comment icons at reduced opacity since hover is unavailable */
+@media (hover: none) {
+  .group .group-hover\:opacity-100 {
+    opacity: 0.3;
+  }
+}

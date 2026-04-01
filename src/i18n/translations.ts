@@ -349,6 +349,11 @@ export interface Translations {
     allStatuses: string;
     allCategories: string;
     allZones: string;
+    // Inline comment
+    moreOptions: string;
+    scrollToElement: string;
+    deleteConfirm: string;
+    deleteYes: string;
   };
 
   // Sales tips (rule-generated)
@@ -682,6 +687,10 @@ export const en: Translations = {
     allStatuses: 'All statuses',
     allCategories: 'All categories',
     allZones: 'All zones',
+    moreOptions: 'More options',
+    scrollToElement: 'Show in dashboard',
+    deleteConfirm: 'Delete?',
+    deleteYes: 'Yes',
   },
 
   salesTips: {
@@ -1054,6 +1063,10 @@ export const cs: Translations = {
     allStatuses: 'Všechny stavy',
     allCategories: 'Všechny kategorie',
     allZones: 'Všechny zóny',
+    moreOptions: 'Další možnosti',
+    scrollToElement: 'Zobrazit na dashboardu',
+    deleteConfirm: 'Smazat?',
+    deleteYes: 'Ano',
   },
 
   salesTips: {

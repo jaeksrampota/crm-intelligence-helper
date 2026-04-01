@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { X, ExternalLink } from 'lucide-react';
 import type { CommentCategory, CommentStatus, ZoneId } from '../../types/comment';
 import { useCommentEditing } from '../../hooks/use-comment-editing';
 import { useTranslation } from '../../i18n';
 import { categoryLabel, statusLabel, zoneLabel } from '../../utils/comment-labels';
+import { cn } from '../../utils/cn';
 import { CommentCard } from './CommentCard';
 import { CommentForm } from './CommentForm';
 
@@ -28,8 +29,6 @@ export function CommentSummaryPanel({ isOpen, onClose }: CommentSummaryPanelProp
   const [categoryFilter, setCategoryFilter] = useState<CommentCategory | ''>('');
   const [zoneFilter, setZoneFilter] = useState<ZoneId | ''>('');
 
-  if (!isOpen) return null;
-
   const filtered = comments
     .filter((c) => !statusFilter || c.status === statusFilter)
     .filter((c) => !categoryFilter || c.category === categoryFilter)
@@ -40,19 +39,45 @@ export function CommentSummaryPanel({ isOpen, onClose }: CommentSummaryPanelProp
   const resolvedCount = comments.filter((c) => c.status === 'resolved').length;
   const rejectedCount = comments.filter((c) => c.status === 'rejected').length;
 
-  const handleAdd = (data: Parameters<typeof addComment>[0] extends infer D ? Omit<D & object, 'zoneId'> : never) => {
+  const handleAdd = (data: Parameters<typeof addComment>[0] extends infer D ? Omit<D & object, 'zoneId' | 'elementId' | 'elementLabel'> : never) => {
     addComment({ ...data, zoneId: (zoneFilter || 'general') as ZoneId });
     cancelAdd();
   };
 
+  const scrollToElement = useCallback((elementAttr?: string, zone?: string) => {
+    onClose();
+    setTimeout(() => {
+      const selector = elementAttr
+        ? `[data-comment-element="${elementAttr}"]`
+        : zone ? `#zone-${zone}` : null;
+      if (!selector) return;
+      const el = document.querySelector(selector);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        (el as HTMLElement).classList.add('ring-2', 'ring-rb-yellow', 'ring-offset-1');
+        setTimeout(() => (el as HTMLElement).classList.remove('ring-2', 'ring-rb-yellow', 'ring-offset-1'), 1500);
+      }
+    }, 300);
+  }, [onClose]);
+
   const selectClass = 'px-2 py-1 border border-gray-300 rounded-md text-xs bg-white focus:outline-none focus:ring-1 focus:ring-rb-yellow';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/30" />
+    <>
+      {/* Overlay */}
       <div
-        className="relative bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-2xl max-h-[85vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
+        className={cn(
+          'fixed inset-0 bg-black/30 transition-opacity z-[54]',
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        )}
+        onClick={onClose}
+      />
+      {/* Sidebar panel */}
+      <div
+        className={cn(
+          'fixed inset-y-0 right-0 w-[420px] max-w-[90vw] bg-white shadow-xl z-[55] transition-transform duration-300 flex flex-col',
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        )}
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200">
@@ -111,9 +136,19 @@ export function CommentSummaryPanel({ isOpen, onClose }: CommentSummaryPanelProp
                   <CommentForm initialData={comment} onSave={saveEdit} onCancel={cancelEdit} />
                 ) : (
                   <div>
-                    <span className="text-[10px] text-gray-400 font-medium mb-1 block">
-                      {zoneLabel(tc, comment.zoneId)}
-                    </span>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-gray-400 font-medium">
+                        {zoneLabel(tc, comment.zoneId)}
+                        {comment.elementLabel && <span className="text-gray-500"> &middot; {comment.elementLabel}</span>}
+                      </span>
+                      <button
+                        onClick={() => scrollToElement(comment.elementId || comment.zoneId, comment.zoneId)}
+                        className="text-[10px] text-blue-500 hover:text-blue-700 flex items-center gap-0.5"
+                        title={tc.scrollToElement || 'Show in dashboard'}
+                      >
+                        <ExternalLink size={10} />
+                      </button>
+                    </div>
                     <CommentCard
                       comment={comment}
                       onEdit={startEdit}
@@ -129,6 +164,6 @@ export function CommentSummaryPanel({ isOpen, onClose }: CommentSummaryPanelProp
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { Comment, ZoneId, CommentCategory, CommentStatus, CommentPriority, CommentTargetAudience } from '../types/comment';
 
 const STORAGE_KEY = 'crm-comments';
+const SYNC_EVENT = 'crm-comments-sync';
 
 function loadComments(): Comment[] {
   try {
@@ -14,18 +15,25 @@ function loadComments(): Comment[] {
 
 function saveComments(list: Comment[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  // Dispatch custom event for same-tab sync across hook instances
+  window.dispatchEvent(new CustomEvent(SYNC_EVENT));
 }
 
 export function useComments() {
   const [comments, setComments] = useState<Comment[]>(loadComments);
 
-  // Sync across hook instances via storage event
+  // Sync across hook instances via custom event (same tab) and storage event (cross tab)
   useEffect(() => {
-    const handler = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) setComments(loadComments());
+    const syncHandler = () => setComments(loadComments());
+    const storageHandler = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) syncHandler();
     };
-    window.addEventListener('storage', handler);
-    return () => window.removeEventListener('storage', handler);
+    window.addEventListener(SYNC_EVENT, syncHandler);
+    window.addEventListener('storage', storageHandler);
+    return () => {
+      window.removeEventListener(SYNC_EVENT, syncHandler);
+      window.removeEventListener('storage', storageHandler);
+    };
   }, []);
 
   const update = useCallback((fn: (prev: Comment[]) => Comment[]) => {
@@ -38,6 +46,8 @@ export function useComments() {
 
   const addComment = useCallback((data: {
     zoneId: ZoneId;
+    elementId?: string;
+    elementLabel?: string;
     text: string;
     author: string;
     category: CommentCategory;
@@ -70,6 +80,14 @@ export function useComments() {
     return comments.filter((c) => c.zoneId === zoneId);
   }, [comments]);
 
+  const getCommentsByElement = useCallback((zoneId: ZoneId, elementId: string) => {
+    return comments.filter((c) => c.zoneId === zoneId && c.elementId === elementId);
+  }, [comments]);
+
+  const getCommentCountForElement = useCallback((zoneId: ZoneId, elementId: string) => {
+    return comments.filter((c) => c.zoneId === zoneId && c.elementId === elementId).length;
+  }, [comments]);
+
   return {
     comments,
     addComment,
@@ -79,5 +97,7 @@ export function useComments() {
     reopenComment: useCallback((id: string) => setStatus(id, 'open'), [setStatus]),
     deleteComment,
     getCommentsByZone,
+    getCommentsByElement,
+    getCommentCountForElement,
   };
 }

@@ -18,6 +18,8 @@ export type ZoneId = 'products' | 'activity' | 'behavior' | 'sales' | 'header' |
 export interface Comment {
   id: string;
   zoneId: ZoneId;
+  elementId?: string;
+  elementLabel?: string;
   text: string;
   author: string;
   timestamp: string;

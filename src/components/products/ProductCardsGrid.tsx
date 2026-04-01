@@ -4,6 +4,7 @@ import { DebitCardInsight } from './DebitCardInsight';
 import { CreditCardInsight } from './CreditCardInsight';
 import { CurrentAccountInsight } from './CurrentAccountInsight';
 import { GenericProductInsight } from './GenericProductInsight';
+import { CommentableElement } from '../comments/CommentableElement';
 import { useTranslation } from '../../i18n';
 
 function ProductCard({ product, onClick }: { product: Product; onClick: () => void }) {
@@ -17,6 +18,12 @@ function ProductCard({ product, onClick }: { product: Product; onClick: () => vo
     default:
       return <GenericProductInsight product={product} onClick={onClick} />;
   }
+}
+
+function getProductLabel(product: Product): string {
+  const name = product.product_name || product.product_type.replace(/_/g, ' ');
+  if (product.card_number) return `${name} ****${product.card_number.slice(-4)}`;
+  return name;
 }
 
 export function ProductCardsGrid({
@@ -34,9 +41,13 @@ export function ProductCardsGrid({
 
   return (
     <div className="space-y-2 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products.title}</h2>
+      <CommentableElement zoneId="products" elementLabel={t.products.title}>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products.title}</h2>
+      </CommentableElement>
       {display.map((p) => (
-        <ProductCard key={p.product_id} product={p} onClick={() => onProductClick(p.product_id)} />
+        <CommentableElement key={p.product_id} zoneId="products" elementId={`product-${p.product_id}`} elementLabel={getProductLabel(p)}>
+          <ProductCard product={p} onClick={() => onProductClick(p.product_id)} />
+        </CommentableElement>
       ))}
       {remaining > 0 && !showAll && (
         <button onClick={() => setShowAll(true)} className="text-xs text-blue-600 hover:underline">
