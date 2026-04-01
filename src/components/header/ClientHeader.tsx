@@ -5,7 +5,7 @@ import { SegmentBadge } from '../shared/SegmentBadge';
 import { useTranslation } from '../../i18n';
 import { RelativeDate } from '../shared/RelativeDate';
 
-export function ClientHeader({ client, interactions }: { client: Client; interactions: Interaction[] }) {
+export function ClientHeader({ client, interactions, onInteractionClick }: { client: Client; interactions: Interaction[]; onInteractionClick?: (id: string) => void }) {
   const age = computeAge(client.date_of_birth);
   const hasBirthday = isBirthdayWithinDays(client.date_of_birth, 7);
   const { t } = useTranslation();
@@ -15,9 +15,9 @@ export function ClientHeader({ client, interactions }: { client: Client; interac
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-5 py-3">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="text-xl font-bold text-gray-900">{client.name}</h1>
             <SegmentBadge segment={client.segment} />
             <span className="text-sm text-gray-500">{age} {t.header.years}</span>
@@ -33,7 +33,10 @@ export function ClientHeader({ client, interactions }: { client: Client; interac
                 {t.header.gdprOk}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+              <span
+                className="inline-flex items-center gap-1 text-[10px] font-medium text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200 cursor-help"
+                title={client.gdpr_consent_status === 'expired' ? t.alerts.gdprExpired : t.alerts.gdprNoConsent}
+              >
                 <ShieldAlert size={14} />
                 {t.header.gdprWarning}
               </span>
@@ -48,16 +51,22 @@ export function ClientHeader({ client, interactions }: { client: Client; interac
             </div>
           )}
         </div>
-        <div className="text-xs text-gray-500 text-right space-y-0.5 shrink-0 ml-4">
+        <div className="text-xs text-gray-500 xl:text-right space-y-0.5 shrink-0">
           {lastBranchVisit && (
-            <div>
+            <div
+              className={onInteractionClick ? 'cursor-pointer hover:underline hover:text-gray-700 transition-colors' : ''}
+              onClick={onInteractionClick ? () => onInteractionClick(lastBranchVisit.interaction_id) : undefined}
+            >
               <span className="text-gray-400">{t.header.lastVisit}</span>{' '}
               <RelativeDate date={lastBranchVisit.timestamp} />
               {lastBranchVisit.branch_name && ` (${lastBranchVisit.branch_name})`}
             </div>
           )}
           {lastCall && (
-            <div>
+            <div
+              className={onInteractionClick ? 'cursor-pointer hover:underline hover:text-gray-700 transition-colors' : ''}
+              onClick={onInteractionClick ? () => onInteractionClick(lastCall.interaction_id) : undefined}
+            >
               <span className="text-gray-400">{t.header.lastCall}</span>{' '}
               <RelativeDate date={lastCall.timestamp} />
             </div>

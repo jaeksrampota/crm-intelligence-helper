@@ -17,20 +17,22 @@ const SEVERITY_STYLES: Record<string, string> = {
   info: 'bg-blue-50 border-blue-300 text-blue-800',
 };
 
-export function AlertChip({ alert, onDismiss }: { alert: Alert; onDismiss: () => void }) {
+export function AlertChip({ alert, onDismiss, onNavigate }: { alert: Alert; onDismiss: () => void; onNavigate?: () => void }) {
   const Icon = ICON_MAP[alert.type] || AlertTriangle;
   const isCritical = alert.severity === 'critical';
   return (
     <div
+      onClick={onNavigate}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors',
         SEVERITY_STYLES[alert.severity],
         isCritical && 'border-2',
+        onNavigate && 'cursor-pointer hover:brightness-95',
       )}
     >
       <Icon size={14} className={cn(isCritical && 'animate-pulse')} />
-      <span>{alert.message}</span>
-      <button onClick={onDismiss} className="ml-1 hover:opacity-60 rounded-full p-0.5 hover:bg-black/5 transition-opacity">
+      <span className={cn(onNavigate && 'hover:underline')}>{alert.message}</span>
+      <button onClick={(e) => { e.stopPropagation(); onDismiss(); }} className="ml-1 hover:opacity-60 rounded-full p-0.5 hover:bg-black/5 transition-opacity">
         <X size={12} />
       </button>
     </div>

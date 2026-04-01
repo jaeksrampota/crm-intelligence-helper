@@ -8,7 +8,7 @@ const LEVEL_COLORS: Record<EngagementLevel, [string, string, string]> = {
   high: ['bg-green-400', 'bg-green-400', 'bg-green-400'],
 };
 
-export function DigitalEngagement({ level, loginCount }: { level: EngagementLevel; loginCount: number }) {
+export function DigitalEngagement({ level, loginCount, onClick }: { level: EngagementLevel; loginCount: number; onClick?: () => void }) {
   const colors = LEVEL_COLORS[level];
   const { t } = useTranslation();
   const labelMap: Record<EngagementLevel, string> = {
@@ -18,7 +18,7 @@ export function DigitalEngagement({ level, loginCount }: { level: EngagementLeve
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+    <div onClick={onClick} className={cn('bg-white rounded-lg border border-gray-200 p-2.5', onClick && 'cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all')}>
       <div className="text-[10px] text-gray-500 font-medium mb-1.5">{t.behavior.digitalEngagement}</div>
       <div className="flex flex-col items-center gap-1">
         <div className="flex gap-1">

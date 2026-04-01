@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-export type SlideoutType = 'product' | 'interaction' | null;
+export type SlideoutType = 'product' | 'interaction' | 'behavior' | 'satisfaction' | null;
 
 export function useSlideout() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,14 +19,25 @@ export function useSlideout() {
     setIsOpen(true);
   }, []);
 
+  const openBehaviorDetail = useCallback((signalKey: string) => {
+    setContentType('behavior');
+    setContentId(signalKey);
+    setIsOpen(true);
+  }, []);
+
+  const openSatisfactionDetail = useCallback(() => {
+    setContentType('satisfaction');
+    setContentId('satisfaction');
+    setIsOpen(true);
+  }, []);
+
   const close = useCallback(() => {
     setIsOpen(false);
-    // Delay clearing content for animation
     setTimeout(() => {
       setContentType(null);
       setContentId(null);
     }, 300);
   }, []);
 
-  return { isOpen, contentType, contentId, openProductDetail, openInteractionDetail, close };
+  return { isOpen, contentType, contentId, openProductDetail, openInteractionDetail, openBehaviorDetail, openSatisfactionDetail, close };
 }

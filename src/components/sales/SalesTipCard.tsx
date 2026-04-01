@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import type { SalesTip } from '../../types';
@@ -16,6 +17,7 @@ const PRIORITY_BADGE: Record<string, string> = {
 };
 
 export function SalesTipCard({ tip }: { tip: SalesTip }) {
+  const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation();
   const priorityLabel: Record<string, string> = {
     high: t.sales.priorityHigh,
@@ -24,7 +26,13 @@ export function SalesTipCard({ tip }: { tip: SalesTip }) {
   };
 
   return (
-    <div className={cn('bg-white rounded-lg border border-gray-200 border-l-4 p-3', PRIORITY_BORDER[tip.priority])}>
+    <div
+      onClick={() => setExpanded(!expanded)}
+      className={cn(
+        'bg-white rounded-lg border border-gray-200 border-l-4 p-3 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all',
+        PRIORITY_BORDER[tip.priority],
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-xs font-semibold text-gray-800">{tip.headline}</h3>
         <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -36,11 +44,19 @@ export function SalesTipCard({ tip }: { tip: SalesTip }) {
           </span>
         </div>
       </div>
-      <p className="text-[10px] text-gray-500 mt-1">{tip.reasoning}</p>
-      <div className="flex items-start gap-1 mt-1.5 pt-1.5 border-t border-gray-100">
-        <ArrowRight size={12} className="text-blue-600 flex-shrink-0 mt-px" />
-        <p className="text-[10px] text-blue-700 font-medium">{tip.suggested_action}</p>
-      </div>
+      <p className={cn('text-[10px] text-gray-500 mt-1', !expanded && 'line-clamp-1')}>{tip.reasoning}</p>
+      {expanded && (
+        <div className="flex items-start gap-1 mt-1.5 pt-1.5 border-t border-gray-100">
+          <ArrowRight size={12} className="text-blue-600 flex-shrink-0 mt-px" />
+          <p className="text-[10px] text-blue-700 font-medium">{tip.suggested_action}</p>
+        </div>
+      )}
+      {!expanded && (
+        <div className="flex items-center gap-1 mt-1 text-[10px] text-blue-600">
+          <ArrowRight size={10} className="transition-transform" />
+          <span>{t.sales.showAction}</span>
+        </div>
+      )}
     </div>
   );
 }

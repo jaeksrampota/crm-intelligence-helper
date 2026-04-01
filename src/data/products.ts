@@ -181,7 +181,7 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Outstanding principal',
-      key_metric_value: '3 250 000 CZK',
+      key_metric_value: '3 250 000 Kč',
       renewal_date: '2027-09-01',
       interest_rate: '3.89%',
       monthly_payment: 18500,
@@ -200,9 +200,9 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Monthly premium',
-      key_metric_value: '1 800 CZK',
+      key_metric_value: '1 800 Kč',
       renewal_date: daysFromNow(290),
-      coverage_amount: '5 000 000 CZK',
+      coverage_amount: '5 000 000 Kč',
       insurance_type: 'life',
     } satisfies GenericProductParams,
   },
@@ -243,7 +243,7 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Current balance',
-      key_metric_value: '1 250 000 CZK',
+      key_metric_value: '1 250 000 Kč',
       renewal_date: null,
       interest_rate: '4.5%',
     } satisfies GenericProductParams,
@@ -285,7 +285,7 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Accumulated value',
-      key_metric_value: '780 000 CZK',
+      key_metric_value: '780 000 Kč',
       renewal_date: null,
       monthly_contribution: 3000,
       employer_contribution: 1500,
@@ -302,7 +302,7 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Portfolio value',
-      key_metric_value: '2 100 000 CZK',
+      key_metric_value: '2 100 000 Kč',
       renewal_date: null,
       risk_profile: 'balanced',
       ytd_return: '+4.8%',
@@ -403,7 +403,7 @@ export const products: Product[] = [
     tariff_name: null,
     key_params: {
       key_metric_label: 'Remaining balance',
-      key_metric_value: '185 000 CZK',
+      key_metric_value: '185 000 Kč',
       renewal_date: null,
       interest_rate: '6.9%',
       monthly_payment: 4200,

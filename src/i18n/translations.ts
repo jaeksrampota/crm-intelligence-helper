@@ -9,6 +9,8 @@ export interface Translations {
     loadingClient: string;
     productDetail: string;
     interactionDetail: string;
+    behaviorDetail: string;
+    satisfactionDetail: string;
   };
 
   // Search
@@ -110,6 +112,7 @@ export interface Translations {
     title: string;
     noInteractions: string;
     open: string;
+    showMore: (count: number) => string;
   };
 
   // Behavior
@@ -142,6 +145,7 @@ export interface Translations {
     priorityHigh: string;
     priorityMed: string;
     priorityLow: string;
+    showAction: string;
   };
 
   // Slideout
@@ -188,6 +192,32 @@ export interface Translations {
     summary: string;
     notes: string;
     relatedTicket: string;
+    // Transaction detail
+    txCategory: string;
+    txStatus: string;
+    txCurrency: string;
+    // Transaction statuses
+    txCompleted: string;
+    txPending: string;
+    txDeclined: string;
+    // Transaction categories
+    categories: {
+      groceries: string;
+      e_commerce: string;
+      travel: string;
+      dining: string;
+      transport: string;
+      utilities: string;
+      entertainment: string;
+      health: string;
+      education: string;
+      atm: string;
+      transfer: string;
+      salary: string;
+      insurance: string;
+      pension: string;
+      other: string;
+    };
   };
 
   // Sentiment
@@ -196,6 +226,39 @@ export interface Translations {
     neutral: string;
     negative: string;
     noData: string;
+  };
+
+  // Behavior detail
+  behaviorDetail: {
+    title: string;
+    balanceHistory: string;
+    currentBalance: string;
+    thirtyDaysAgo: string;
+    change: string;
+    allChannels: string;
+    interactions: string;
+    recentLogins: string;
+    device: string;
+    intlTransactions: string;
+    onlineTransactions: string;
+    merchant: string;
+    noData: string;
+  };
+
+  // Satisfaction
+  satisfaction: {
+    title: string;
+    detailTitle: string;
+    latestNps: string;
+    surveyHistory: string;
+    verbatimFeedback: string;
+    promoter: string;
+    passive: string;
+    detractor: string;
+    noScores: string;
+    score: string;
+    survey: string;
+    surveys: string;
   };
 
   // Relative dates
@@ -243,6 +306,8 @@ export const en: Translations = {
     loadingClient: 'Loading client data...',
     productDetail: 'Product Detail',
     interactionDetail: 'Interaction Detail',
+    behaviorDetail: 'Behavior Detail',
+    satisfactionDetail: 'Satisfaction Detail',
   },
 
   search: {
@@ -332,6 +397,7 @@ export const en: Translations = {
     title: 'Recent Activity',
     noInteractions: 'No recent interactions',
     open: 'Open',
+    showMore: (count) => `+${count} more interactions`,
   },
 
   behavior: {
@@ -362,6 +428,7 @@ export const en: Translations = {
     priorityHigh: 'High',
     priorityMed: 'Med',
     priorityLow: 'Low',
+    showAction: 'Show action',
   },
 
   slideout: {
@@ -406,6 +473,60 @@ export const en: Translations = {
     summary: 'Summary',
     notes: 'Notes',
     relatedTicket: 'Related ticket:',
+    txCategory: 'Category:',
+    txStatus: 'Status:',
+    txCurrency: 'Currency:',
+    txCompleted: 'Completed',
+    txPending: 'Pending',
+    txDeclined: 'Declined',
+    categories: {
+      groceries: 'Groceries',
+      e_commerce: 'E-commerce',
+      travel: 'Travel',
+      dining: 'Dining',
+      transport: 'Transport',
+      utilities: 'Utilities',
+      entertainment: 'Entertainment',
+      health: 'Health',
+      education: 'Education',
+      atm: 'ATM',
+      transfer: 'Transfer',
+      salary: 'Salary',
+      insurance: 'Insurance',
+      pension: 'Pension',
+      other: 'Other',
+    },
+  },
+
+  behaviorDetail: {
+    title: 'Behavior Detail',
+    balanceHistory: 'Balance History (30 days)',
+    currentBalance: 'Current balance:',
+    thirtyDaysAgo: '30 days ago:',
+    change: 'Change:',
+    allChannels: 'All Channels',
+    interactions: 'interactions',
+    recentLogins: 'Recent Logins',
+    device: 'Device:',
+    intlTransactions: 'International Transactions',
+    onlineTransactions: 'Online Transactions',
+    merchant: 'Merchant',
+    noData: 'No data available',
+  },
+
+  satisfaction: {
+    title: 'Satisfaction',
+    detailTitle: 'Satisfaction Detail',
+    latestNps: 'Latest NPS',
+    surveyHistory: 'Survey History',
+    verbatimFeedback: 'Client Feedback',
+    promoter: 'Promoter',
+    passive: 'Passive',
+    detractor: 'Detractor',
+    noScores: 'No satisfaction data',
+    score: 'Score',
+    survey: 'survey',
+    surveys: 'surveys',
   },
 
   sentiment: {
@@ -497,6 +618,8 @@ export const cs: Translations = {
     loadingClient: 'Načítání dat klienta...',
     productDetail: 'Detail produktu',
     interactionDetail: 'Detail interakce',
+    behaviorDetail: 'Detail chování',
+    satisfactionDetail: 'Detail spokojenosti',
   },
 
   search: {
@@ -586,6 +709,7 @@ export const cs: Translations = {
     title: 'Nedávná aktivita',
     noInteractions: 'Žádné nedávné interakce',
     open: 'Otevřeno',
+    showMore: (count) => `+${count} dalších interakcí`,
   },
 
   behavior: {
@@ -616,6 +740,7 @@ export const cs: Translations = {
     priorityHigh: 'Vysoká',
     priorityMed: 'Střední',
     priorityLow: 'Nízká',
+    showAction: 'Zobrazit akci',
   },
 
   slideout: {
@@ -660,6 +785,60 @@ export const cs: Translations = {
     summary: 'Shrnutí',
     notes: 'Poznámky',
     relatedTicket: 'Související tiket:',
+    txCategory: 'Kategorie:',
+    txStatus: 'Stav:',
+    txCurrency: 'Měna:',
+    txCompleted: 'Dokončeno',
+    txPending: 'Probíhá',
+    txDeclined: 'Zamítnuto',
+    categories: {
+      groceries: 'Potraviny',
+      e_commerce: 'E-commerce',
+      travel: 'Cestování',
+      dining: 'Stravování',
+      transport: 'Doprava',
+      utilities: 'Služby',
+      entertainment: 'Zábava',
+      health: 'Zdraví',
+      education: 'Vzdělávání',
+      atm: 'Bankomat',
+      transfer: 'Převod',
+      salary: 'Mzda',
+      insurance: 'Pojištění',
+      pension: 'Penze',
+      other: 'Ostatní',
+    },
+  },
+
+  behaviorDetail: {
+    title: 'Detail chování',
+    balanceHistory: 'Historie zůstatku (30 dní)',
+    currentBalance: 'Aktuální zůstatek:',
+    thirtyDaysAgo: 'Před 30 dny:',
+    change: 'Změna:',
+    allChannels: 'Všechny kanály',
+    interactions: 'interakcí',
+    recentLogins: 'Nedávná přihlášení',
+    device: 'Zařízení:',
+    intlTransactions: 'Mezinárodní transakce',
+    onlineTransactions: 'Online transakce',
+    merchant: 'Obchodník',
+    noData: 'Žádná data',
+  },
+
+  satisfaction: {
+    title: 'Spokojenost',
+    detailTitle: 'Detail spokojenosti',
+    latestNps: 'Poslední NPS',
+    surveyHistory: 'Historie průzkumů',
+    verbatimFeedback: 'Zpětná vazba klienta',
+    promoter: 'Promotér',
+    passive: 'Pasivní',
+    detractor: 'Detraktor',
+    noScores: 'Žádná data o spokojenosti',
+    score: 'Skóre',
+    survey: 'průzkum',
+    surveys: 'průzkumů',
   },
 
   sentiment: {

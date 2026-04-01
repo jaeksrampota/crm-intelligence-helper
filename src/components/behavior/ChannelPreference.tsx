@@ -14,11 +14,11 @@ const CHANNEL_ICONS: Record<string, React.ComponentType<{ size?: number; classNa
   chatbot: Bot,
 };
 
-export function ChannelPreference({ channels }: { channels: ChannelUsage[] }) {
+export function ChannelPreference({ channels, onClick }: { channels: ChannelUsage[]; onClick?: () => void }) {
   const maxCount = channels[0]?.count ?? 1;
   const { t } = useTranslation();
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+    <div onClick={onClick} className={cn('bg-white rounded-lg border border-gray-200 p-2.5', onClick && 'cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all')}>
       <div className="text-[10px] text-gray-500 font-medium mb-1.5">{t.behavior.channelPreference}</div>
       <div className="flex items-end gap-2 justify-center">
         {channels.slice(0, 3).map(({ channel, count }) => {

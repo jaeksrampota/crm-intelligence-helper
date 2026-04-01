@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { SearchBar } from './components/layout/SearchBar';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { ClientHeader } from './components/header/ClientHeader';
@@ -10,15 +10,33 @@ import { AlertsBar } from './components/alerts/AlertsBar';
 import { SlideoutPanel } from './components/slideout/SlideoutPanel';
 import { ProductDetailPanel } from './components/slideout/ProductDetailPanel';
 import { InteractionDetailPanel } from './components/slideout/InteractionDetailPanel';
+import { BehaviorDetailPanel } from './components/slideout/BehaviorDetailPanel';
+import { SatisfactionDetailPanel } from './components/slideout/SatisfactionDetailPanel';
 import { useClientDashboard } from './hooks/use-client-dashboard';
 import { useSlideout } from './hooks/use-slideout';
 import { useTranslation } from './i18n';
+
+const SLIDEOUT_TITLES = (t: ReturnType<typeof useTranslation>['t']) => ({
+  product: t.app.productDetail,
+  interaction: t.app.interactionDetail,
+  behavior: t.app.behaviorDetail,
+  satisfaction: t.app.satisfactionDetail,
+});
 
 export default function App() {
   const [clientId, setClientId] = useState<string | null>(null);
   const { profile, salesTips, alerts, behavioralSignals, isLoading, dismissAlert } = useClientDashboard(clientId);
   const slideout = useSlideout();
   const { t, language, toggleLanguage } = useTranslation();
+
+  const scrollToZone = useCallback((zone: string) => {
+    const el = document.getElementById(`zone-${zone}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      el.classList.add('ring-2', 'ring-rb-yellow', 'ring-offset-1');
+      setTimeout(() => el.classList.remove('ring-2', 'ring-rb-yellow', 'ring-offset-1'), 1500);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,7 +49,7 @@ export default function App() {
         <SearchBar
           onSelectClient={setClientId}
           selectedClientName={profile?.client.name}
-          onClear={() => setClientId(null)}
+          onClear={() => { slideout.close(); setClientId(null); }}
         />
         <button
           onClick={toggleLanguage}
@@ -57,11 +75,18 @@ export default function App() {
         </div>
       ) : profile && behavioralSignals ? (
         <DashboardLayout
-          header={<ClientHeader client={profile.client} interactions={profile.interactions} />}
-          alerts={<AlertsBar alerts={alerts} onDismiss={dismissAlert} />}
+          header={<ClientHeader client={profile.client} interactions={profile.interactions} onInteractionClick={slideout.openInteractionDetail} />}
+          alerts={<AlertsBar alerts={alerts} onDismiss={dismissAlert} onNavigate={scrollToZone} />}
           products={<ProductCardsGrid products={profile.products} onProductClick={slideout.openProductDetail} />}
           activity={<ActivityTimeline interactions={profile.interactions} onInteractionClick={slideout.openInteractionDetail} />}
-          behavior={<BehaviorSignals signals={behavioralSignals} />}
+          behavior={
+            <BehaviorSignals
+              signals={behavioralSignals}
+              satisfactionScores={profile.satisfaction_scores}
+              onTileClick={slideout.openBehaviorDetail}
+              onSatisfactionClick={slideout.openSatisfactionDetail}
+            />
+          }
           sales={<SalesTipsPanel tips={salesTips} />}
         />
       ) : null}
@@ -70,13 +95,19 @@ export default function App() {
       <SlideoutPanel
         isOpen={slideout.isOpen}
         onClose={slideout.close}
-        title={slideout.contentType === 'product' ? t.app.productDetail : t.app.interactionDetail}
+        title={slideout.contentType ? SLIDEOUT_TITLES(t)[slideout.contentType] : ''}
       >
         {slideout.contentType === 'product' && slideout.contentId && (
           <ProductDetailPanel productId={slideout.contentId} />
         )}
         {slideout.contentType === 'interaction' && slideout.contentId && (
           <InteractionDetailPanel interactionId={slideout.contentId} />
+        )}
+        {slideout.contentType === 'behavior' && slideout.contentId && profile && (
+          <BehaviorDetailPanel signalKey={slideout.contentId} profile={profile} />
+        )}
+        {slideout.contentType === 'satisfaction' && profile && (
+          <SatisfactionDetailPanel scores={profile.satisfaction_scores} />
         )}
       </SlideoutPanel>
     </div>

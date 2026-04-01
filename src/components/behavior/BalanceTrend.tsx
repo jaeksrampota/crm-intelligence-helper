@@ -15,7 +15,7 @@ const COLOR_MAP: Record<BalanceTrendType, string> = {
   declining: 'text-red-500',
 };
 
-export function BalanceTrend({ trend, pct }: { trend: BalanceTrendType; pct: number }) {
+export function BalanceTrend({ trend, pct, onClick }: { trend: BalanceTrendType; pct: number; onClick?: () => void }) {
   const Icon = ICON_MAP[trend];
   const color = COLOR_MAP[trend];
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export function BalanceTrend({ trend, pct }: { trend: BalanceTrendType; pct: num
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+    <div onClick={onClick} className={cn('bg-white rounded-lg border border-gray-200 p-2.5', onClick && 'cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all')}>
       <div className="text-[10px] text-gray-500 font-medium mb-1.5">{t.behavior.balanceTrend}</div>
       <div className="flex items-center gap-2 justify-center">
         <Icon size={24} className={cn(color)} />

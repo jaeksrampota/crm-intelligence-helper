@@ -73,6 +73,15 @@ export function makeBirthdayDOB(age: number, daysUntilNextBirthday: number): str
   return `${birthYear}-${String(nextBday.getMonth() + 1).padStart(2, '0')}-${String(nextBday.getDate()).padStart(2, '0')}`;
 }
 
+export function formatDate(isoDate: string, locale: string = 'cs-CZ'): string {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString(locale === 'cs' ? 'cs-CZ' : 'en-GB', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export function isWithinDays(isoDate: string, days: number): boolean {
   const target = new Date(isoDate);
   const now = new Date();
