@@ -283,6 +283,74 @@ export interface Translations {
     gdprNoConsent: string;
   };
 
+  // Login
+  login: {
+    title: string;
+    username: string;
+    password: string;
+    submit: string;
+    error: string;
+    logout: string;
+  };
+
+  // Comments
+  comments: {
+    title: string;
+    allComments: string;
+    addComment: string;
+    editComment: string;
+    noComments: string;
+    save: string;
+    cancel: string;
+    delete: string;
+    commentText: string;
+    author: string;
+    category: string;
+    priority: string;
+    targetAudience: string;
+    statusLabel: string;
+    resolve: string;
+    reject: string;
+    reopen: string;
+    openCount: (count: number) => string;
+    // Statuses
+    statusOpen: string;
+    statusResolved: string;
+    statusRejected: string;
+    // Categories
+    catBusiness: string;
+    catCustomerWording: string;
+    catDataLimitation: string;
+    catItFeasibility: string;
+    catComplianceLegal: string;
+    catUxUi: string;
+    catProductIdea: string;
+    // Priorities
+    priorityLow: string;
+    priorityMedium: string;
+    priorityHigh: string;
+    priorityNone: string;
+    // Target audiences
+    audienceBusiness: string;
+    audienceIt: string;
+    audienceData: string;
+    audienceCompliance: string;
+    audienceProduct: string;
+    audienceNone: string;
+    // Zone names
+    zoneProducts: string;
+    zoneActivity: string;
+    zoneBehavior: string;
+    zoneSales: string;
+    zoneHeader: string;
+    zoneAlerts: string;
+    zoneGeneral: string;
+    // Filters
+    allStatuses: string;
+    allCategories: string;
+    allZones: string;
+  };
+
   // Sales tips (rule-generated)
   salesTips: {
     R001: { headline: string; reasoning: (count: number) => string; action: string };
@@ -554,6 +622,66 @@ export const en: Translations = {
     unresolvedComplaints: (count) => `${count} unresolved complaint(s)`,
     gdprExpired: 'GDPR consent expired',
     gdprNoConsent: 'No GDPR consent on file',
+  },
+
+  login: {
+    title: 'Sign In',
+    username: 'Username',
+    password: 'Password',
+    submit: 'Sign In',
+    error: 'Invalid credentials',
+    logout: 'Log out',
+  },
+
+  comments: {
+    title: 'Comments',
+    allComments: 'All Comments',
+    addComment: 'Add Comment',
+    editComment: 'Edit Comment',
+    noComments: 'No comments yet',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    commentText: 'Comment',
+    author: 'Author',
+    category: 'Category',
+    priority: 'Priority',
+    targetAudience: 'For',
+    statusLabel: 'Status',
+    resolve: 'Resolve',
+    reject: 'Reject',
+    reopen: 'Reopen',
+    openCount: (count) => `${count} open`,
+    statusOpen: 'Open',
+    statusResolved: 'Resolved',
+    statusRejected: 'Rejected',
+    catBusiness: 'Business',
+    catCustomerWording: 'Customer wording',
+    catDataLimitation: 'Data limitation',
+    catItFeasibility: 'IT feasibility',
+    catComplianceLegal: 'Compliance / legal',
+    catUxUi: 'UX / UI',
+    catProductIdea: 'Product idea',
+    priorityLow: 'Low',
+    priorityMedium: 'Medium',
+    priorityHigh: 'High',
+    priorityNone: 'None',
+    audienceBusiness: 'Business',
+    audienceIt: 'IT',
+    audienceData: 'Data',
+    audienceCompliance: 'Compliance',
+    audienceProduct: 'Product',
+    audienceNone: 'None',
+    zoneProducts: 'Products',
+    zoneActivity: 'Activity',
+    zoneBehavior: 'Behavior',
+    zoneSales: 'Sales Tips',
+    zoneHeader: 'Client Header',
+    zoneAlerts: 'Alerts',
+    zoneGeneral: 'General',
+    allStatuses: 'All statuses',
+    allCategories: 'All categories',
+    allZones: 'All zones',
   },
 
   salesTips: {
@@ -866,6 +994,66 @@ export const cs: Translations = {
     unresolvedComplaints: (count) => `${count} nevyřešená stížnost(i)`,
     gdprExpired: 'Souhlas GDPR vypršel',
     gdprNoConsent: 'Chybí souhlas GDPR',
+  },
+
+  login: {
+    title: 'Přihlášení',
+    username: 'Uživatelské jméno',
+    password: 'Heslo',
+    submit: 'Přihlásit',
+    error: 'Neplatné přihlašovací údaje',
+    logout: 'Odhlásit',
+  },
+
+  comments: {
+    title: 'Komentáře',
+    allComments: 'Všechny komentáře',
+    addComment: 'Přidat komentář',
+    editComment: 'Upravit komentář',
+    noComments: 'Zatím žádné komentáře',
+    save: 'Uložit',
+    cancel: 'Zrušit',
+    delete: 'Smazat',
+    commentText: 'Komentář',
+    author: 'Autor',
+    category: 'Kategorie',
+    priority: 'Priorita',
+    targetAudience: 'Pro',
+    statusLabel: 'Stav',
+    resolve: 'Vyřešit',
+    reject: 'Zamítnout',
+    reopen: 'Znovu otevřít',
+    openCount: (count) => `${count} otevřených`,
+    statusOpen: 'Otevřený',
+    statusResolved: 'Vyřešený',
+    statusRejected: 'Zamítnutý',
+    catBusiness: 'Byznys',
+    catCustomerWording: 'Zákaznická formulace',
+    catDataLimitation: 'Datové omezení',
+    catItFeasibility: 'IT proveditelnost',
+    catComplianceLegal: 'Compliance / právní',
+    catUxUi: 'UX / UI',
+    catProductIdea: 'Produktový nápad',
+    priorityLow: 'Nízká',
+    priorityMedium: 'Střední',
+    priorityHigh: 'Vysoká',
+    priorityNone: 'Žádná',
+    audienceBusiness: 'Byznys',
+    audienceIt: 'IT',
+    audienceData: 'Data',
+    audienceCompliance: 'Compliance',
+    audienceProduct: 'Produkt',
+    audienceNone: 'Žádná',
+    zoneProducts: 'Produkty',
+    zoneActivity: 'Aktivita',
+    zoneBehavior: 'Chování',
+    zoneSales: 'Obchodní tipy',
+    zoneHeader: 'Hlavička klienta',
+    zoneAlerts: 'Upozornění',
+    zoneGeneral: 'Obecné',
+    allStatuses: 'Všechny stavy',
+    allCategories: 'Všechny kategorie',
+    allZones: 'Všechny zóny',
   },
 
   salesTips: {

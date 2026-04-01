@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/crm-intelligence-helper/',
+  base: process.env.GITHUB_ACTIONS ? '/crm-intelligence-helper/' : '/',
 })

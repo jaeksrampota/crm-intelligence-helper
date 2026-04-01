@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { LogOut } from 'lucide-react';
 import { SearchBar } from './components/layout/SearchBar';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { ClientHeader } from './components/header/ClientHeader';
@@ -12,8 +13,13 @@ import { ProductDetailPanel } from './components/slideout/ProductDetailPanel';
 import { InteractionDetailPanel } from './components/slideout/InteractionDetailPanel';
 import { BehaviorDetailPanel } from './components/slideout/BehaviorDetailPanel';
 import { SatisfactionDetailPanel } from './components/slideout/SatisfactionDetailPanel';
+import { LoginPage } from './components/auth/LoginPage';
+import { AllCommentsButton } from './components/comments/AllCommentsButton';
+import { CommentSummaryPanel } from './components/comments/CommentSummaryPanel';
 import { useClientDashboard } from './hooks/use-client-dashboard';
 import { useSlideout } from './hooks/use-slideout';
+import { useAuth } from './hooks/use-auth';
+import { useComments } from './hooks/use-comments';
 import { useTranslation } from './i18n';
 
 const SLIDEOUT_TITLES = (t: ReturnType<typeof useTranslation>['t']) => ({
@@ -27,6 +33,9 @@ export default function App() {
   const [clientId, setClientId] = useState<string | null>(null);
   const { profile, salesTips, alerts, behavioralSignals, isLoading, dismissAlert } = useClientDashboard(clientId);
   const slideout = useSlideout();
+  const { isAuthenticated, login, logout, error: authError } = useAuth();
+  const { comments } = useComments();
+  const [showAllComments, setShowAllComments] = useState(false);
   const { t, language, toggleLanguage } = useTranslation();
 
   const scrollToZone = useCallback((zone: string) => {
@@ -37,6 +46,12 @@ export default function App() {
       setTimeout(() => el.classList.remove('ring-2', 'ring-rb-yellow', 'ring-offset-1'), 1500);
     }
   }, []);
+
+  const openCommentCount = comments.filter((c) => c.status === 'open').length;
+
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={login} error={authError} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,15 +66,25 @@ export default function App() {
           selectedClientName={profile?.client.name}
           onClear={() => { slideout.close(); setClientId(null); }}
         />
-        <button
-          onClick={toggleLanguage}
-          className="ml-auto shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors text-xs font-semibold"
-          title={language === 'en' ? 'Přepnout do češtiny' : 'Switch to English'}
-        >
-          <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
-          <span className="text-gray-300">|</span>
-          <span className={language === 'cs' ? 'opacity-100' : 'opacity-40'}>CZ</span>
-        </button>
+        <div className="ml-auto flex items-center gap-2 shrink-0">
+          <AllCommentsButton openCount={openCommentCount} onClick={() => setShowAllComments(true)} />
+          <button
+            onClick={toggleLanguage}
+            className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors text-xs font-semibold"
+            title={language === 'en' ? 'Přepnout do češtiny' : 'Switch to English'}
+          >
+            <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
+            <span className="text-gray-300">|</span>
+            <span className={language === 'cs' ? 'opacity-100' : 'opacity-40'}>CZ</span>
+          </button>
+          <button
+            onClick={logout}
+            className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors text-xs font-semibold text-gray-600"
+            title={t.login.logout}
+          >
+            <LogOut size={14} />
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -110,6 +135,9 @@ export default function App() {
           <SatisfactionDetailPanel scores={profile.satisfaction_scores} />
         )}
       </SlideoutPanel>
+
+      {/* All comments summary */}
+      <CommentSummaryPanel isOpen={showAllComments} onClose={() => setShowAllComments(false)} />
     </div>
   );
 }

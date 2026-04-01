@@ -7,3 +7,4 @@ export * from './behavioral';
 export * from './satisfaction';
 export * from './insights';
 export * from './dashboard';
+export * from './comment';
