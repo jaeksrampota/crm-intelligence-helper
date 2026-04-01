@@ -1,29 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Windows 2000 System Font Stack ── */
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  font-size: 11px;
   margin: 0;
-  scroll-behavior: smooth;
-  @apply bg-gray-50 text-gray-900 antialiased;
+  background-color: #008080; /* Win2k teal desktop */
+  color: #000000;
 }
 
 #root {
   min-height: 100vh;
 }
 
+/* ── Win2k Raised Button (outset bevel) ── */
+.win2k-btn {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  outline: 1px solid #000000;
+  padding: 2px 8px;
+  font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  color: #000000;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.win2k-btn:active,
+.win2k-btn.active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  padding-top: 3px;
+  padding-left: 9px;
+}
+.win2k-btn:hover {
+  background-color: #e4e0d8;
+}
+
+/* ── Win2k Panel / Dialog (raised window) ── */
+.win2k-panel {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  outline: 1px solid #808080;
+}
+
+/* ── Win2k Inset Field (sunken) ── */
+.win2k-inset {
+  background-color: #ffffff;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  outline: 1px solid #404040;
+}
+
+/* ── Win2k Title Bar (active) ── */
+.win2k-titlebar {
+  background: linear-gradient(to right, #0a246a, #a6caf0);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+/* ── Win2k GroupBox (raised label box) ── */
+.win2k-groupbox {
+  background-color: #d4d0c8;
+  border: 1px solid #808080;
+  outline: 1px solid #ffffff;
+  padding: 12px 8px 8px;
+  position: relative;
+}
+
+/* ── Win2k Scrollbars ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 16px;
+  height: 16px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background-color: #d4d0c8;
+  border: 1px inset #808080;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
 }
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+::-webkit-scrollbar-corner {
+  background-color: #d4d0c8;
+}
+::-webkit-scrollbar-button {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+/* ── Win2k status bar ── */
+.win2k-statusbar {
+  background-color: #d4d0c8;
+  border-top: 2px solid #808080;
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+/* ── Win2k Listbox/select rows ── */
+.win2k-listitem {
+  padding: 2px 4px;
+  cursor: default;
+}
+.win2k-listitem:hover {
+  background-color: #0a246a;
+  color: #ffffff;
+}
+.win2k-listitem.selected {
+  background-color: #0a246a;
+  color: #ffffff;
+}
+
+/* ── Tooltip style ── */
+.win2k-tooltip {
+  background-color: #ffffe1;
+  border: 1px solid #000000;
+  font-size: 11px;
+  padding: 2px 5px;
 }

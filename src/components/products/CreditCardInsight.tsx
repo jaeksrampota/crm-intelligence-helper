@@ -4,8 +4,21 @@ import { StatusIndicator } from '../shared/StatusIndicator';
 import { CreditGauge } from '../shared/CreditGauge';
 import { formatCZK } from '../../utils/format';
 import { isWithinDays } from '../../utils/date-helpers';
-import { cn } from '../../utils/cn';
 import { useTranslation } from '../../i18n';
+
+const WIN_CARD: React.CSSProperties = {
+  background: '#d4d0c8',
+  borderTop: '2px solid #ffffff',
+  borderLeft: '2px solid #ffffff',
+  borderRight: '2px solid #808080',
+  borderBottom: '2px solid #808080',
+  outline: '1px solid #404040',
+  padding: '5px 7px',
+  cursor: 'pointer',
+  fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+  fontSize: 11,
+  marginBottom: 4,
+};
 
 export function CreditCardInsight({ product, onClick }: { product: Product; onClick: () => void }) {
   const p = product.key_params as CreditCardParams;
@@ -13,45 +26,58 @@ export function CreditCardInsight({ product, onClick }: { product: Product; onCl
   const { t } = useTranslation();
 
   return (
-    <div
-      onClick={onClick}
-      className="bg-white rounded-lg border border-gray-200 p-3 cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all"
-    >
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-1.5">
-          <CreditCard size={14} className="text-purple-600" />
-          <span className="text-xs font-semibold">{p.card_variant} {t.products.credit}</span>
+    <div onClick={onClick} style={WIN_CARD}>
+      {/* Title row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CreditCard size={13} style={{ color: '#404040' }} />
+          <span style={{ fontWeight: 'bold' }}>{p.card_variant} {t.products.credit}</span>
         </div>
         <StatusIndicator status={product.status} />
       </div>
 
-      <div className="flex items-center gap-3 mb-1.5">
+      {/* Credit gauge + available */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
         <CreditGauge value={p.outstanding_balance} max={p.credit_limit} />
         <div>
-          <div className="text-xs text-gray-500">{t.products.availableLOP}</div>
-          <div className="text-sm font-bold text-green-600">{formatCZK(p.available_amount)}</div>
+          <div style={{ fontSize: 10, color: '#808080' }}>{t.products.availableLOP}</div>
+          <div style={{ fontSize: 12, fontWeight: 'bold', color: '#006400' }}>{formatCZK(p.available_amount)}</div>
         </div>
       </div>
 
-      <div className="text-[10px] text-gray-600 space-y-0.5 mt-2 pt-1.5 border-t border-gray-100">
-        <div>
-          {t.products.limit} {formatCZK(p.credit_limit)} · {t.products.owed} {formatCZK(p.outstanding_balance)}
-        </div>
-        <div className={cn(paymentSoon ? 'text-red-600 font-medium' : '')}>
+      {/* Details inset */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderTop: '1px solid #808080',
+          borderLeft: '1px solid #808080',
+          borderRight: '1px solid #ffffff',
+          borderBottom: '1px solid #ffffff',
+          padding: '3px 5px',
+          fontSize: 10,
+          color: '#444',
+          marginBottom: 4,
+        }}
+      >
+        <div>{t.products.limit} {formatCZK(p.credit_limit)} · {t.products.owed} {formatCZK(p.outstanding_balance)}</div>
+        <div style={{ color: paymentSoon ? '#c00000' : '#444', fontWeight: paymentSoon ? 'bold' : 'normal' }}>
           {t.products.minPayment} {formatCZK(p.minimum_payment_amount)} {t.products.due} {p.minimum_payment_due_date}
         </div>
       </div>
 
-      <div className="mt-2">
-        <span
-          className={cn(
-            'text-[10px] font-medium px-2 py-0.5 rounded-full border',
-            p.revolving_active ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-gray-50 text-gray-600 border-gray-200',
-          )}
-        >
-          {p.revolving_active ? t.products.revolving : t.products.transactional}
-        </span>
-      </div>
+      {/* Revolving badge */}
+      <span
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          padding: '1px 6px',
+          background: p.revolving_active ? '#fff8e0' : '#f0f0f0',
+          border: p.revolving_active ? '1px solid #b08000' : '1px solid #808080',
+          color: p.revolving_active ? '#7a5500' : '#555',
+        }}
+      >
+        {p.revolving_active ? t.products.revolving : t.products.transactional}
+      </span>
     </div>
   );
 }

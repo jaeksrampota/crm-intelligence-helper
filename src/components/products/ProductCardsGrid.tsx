@@ -33,13 +33,16 @@ export function ProductCardsGrid({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-2 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.products.title}</h2>
+    <div style={{ fontFamily: 'Tahoma, MS Sans Serif, sans-serif', fontSize: 11 }}>
       {display.map((p) => (
         <ProductCard key={p.product_id} product={p} onClick={() => onProductClick(p.product_id)} />
       ))}
       {remaining > 0 && !showAll && (
-        <button onClick={() => setShowAll(true)} className="text-xs text-blue-600 hover:underline">
+        <button
+          onClick={() => setShowAll(true)}
+          className="win2k-btn"
+          style={{ marginTop: 2, fontSize: 10 }}
+        >
           {t.products.moreProducts(remaining)}
         </button>
       )}

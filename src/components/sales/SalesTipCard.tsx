@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import type { SalesTip } from '../../types';
 import { useTranslation } from '../../i18n';
 
-const PRIORITY_BORDER: Record<string, string> = {
-  high: 'border-l-priority-high',
-  medium: 'border-l-priority-medium',
-  low: 'border-l-priority-low',
+const PRIORITY_LEFT_BORDER: Record<string, string> = {
+  high: '#cc0000',
+  medium: '#cc7700',
+  low: '#0000c0',
 };
 
-const PRIORITY_BADGE: Record<string, string> = {
-  high: 'bg-red-50 text-red-700 border-red-200',
-  medium: 'bg-amber-50 text-amber-700 border-amber-200',
-  low: 'bg-blue-50 text-blue-700 border-blue-200',
+const PRIORITY_BADGE_STYLE: Record<string, React.CSSProperties> = {
+  high: { background: '#ffeeee', color: '#8b0000', border: '1px solid #cc0000', fontWeight: 'bold' },
+  medium: { background: '#fffbec', color: '#7a5500', border: '1px solid #b08000', fontWeight: 'bold' },
+  low: { background: '#eef4ff', color: '#00008b', border: '1px solid #4040a0', fontWeight: 'bold' },
 };
 
 export function SalesTipCard({ tip }: { tip: SalesTip }) {
@@ -28,32 +27,77 @@ export function SalesTipCard({ tip }: { tip: SalesTip }) {
   return (
     <div
       onClick={() => setExpanded(!expanded)}
-      className={cn(
-        'bg-white rounded-lg border border-gray-200 border-l-4 p-3 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all',
-        PRIORITY_BORDER[tip.priority],
-      )}
+      style={{
+        background: '#d4d0c8',
+        borderTop: '2px solid #ffffff',
+        borderLeft: `4px solid ${PRIORITY_LEFT_BORDER[tip.priority] || '#808080'}`,
+        borderRight: '2px solid #808080',
+        borderBottom: '2px solid #808080',
+        outline: '1px solid #404040',
+        padding: '5px 7px',
+        cursor: 'pointer',
+        fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+        fontSize: 11,
+        marginBottom: 4,
+      }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="text-xs font-semibold text-gray-800">{tip.headline}</h3>
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className={cn('text-[9px] font-semibold px-1.5 py-0.5 rounded-full border', PRIORITY_BADGE[tip.priority])}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6, marginBottom: 3 }}>
+        <h3 style={{ fontWeight: 'bold', fontSize: 11, margin: 0, color: '#000' }}>{tip.headline}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          <span style={{ fontSize: 9, padding: '1px 5px', ...PRIORITY_BADGE_STYLE[tip.priority] }}>
             {priorityLabel[tip.priority]}
           </span>
-          <span className="text-[9px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+          <span
+            style={{
+              fontSize: 9,
+              background: '#c8c4bc',
+              color: '#555',
+              padding: '1px 5px',
+              border: '1px solid #808080',
+            }}
+          >
             {tip.source === 'rules' ? t.sales.rules : `${t.sales.ml} ${tip.confidence_score ? Math.round(tip.confidence_score * 100) + '%' : ''}`}
           </span>
         </div>
       </div>
-      <p className={cn('text-[10px] text-gray-500 mt-1', !expanded && 'line-clamp-1')}>{tip.reasoning}</p>
+
+      {/* Reasoning */}
+      <p
+        style={{
+          fontSize: 10,
+          color: '#555',
+          margin: 0,
+          overflow: 'hidden',
+          display: '-webkit-box',
+          WebkitLineClamp: expanded ? undefined : 1,
+          WebkitBoxOrient: 'vertical',
+        }}
+      >
+        {tip.reasoning}
+      </p>
+
+      {/* Expanded action */}
       {expanded && (
-        <div className="flex items-start gap-1 mt-1.5 pt-1.5 border-t border-gray-100">
-          <ArrowRight size={12} className="text-blue-600 flex-shrink-0 mt-px" />
-          <p className="text-[10px] text-blue-700 font-medium">{tip.suggested_action}</p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 4,
+            marginTop: 5,
+            paddingTop: 5,
+            borderTop: '1px solid #808080',
+          }}
+        >
+          <ArrowRight size={11} style={{ color: '#0000c0', flexShrink: 0, marginTop: 1 }} />
+          <p style={{ fontSize: 10, color: '#0000c0', fontWeight: 'bold', margin: 0 }}>{tip.suggested_action}</p>
         </div>
       )}
+
+      {/* Collapsed hint */}
       {!expanded && (
-        <div className="flex items-center gap-1 mt-1 text-[10px] text-blue-600">
-          <ArrowRight size={10} className="transition-transform" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 4, fontSize: 10, color: '#0000c0' }}>
+          <ArrowRight size={10} />
           <span>{t.sales.showAction}</span>
         </div>
       )}

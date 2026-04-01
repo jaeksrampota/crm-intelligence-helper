@@ -10,24 +10,36 @@ export function ActivityTimeline({ interactions, onInteractionClick }: { interac
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-1 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.activity.title}</h2>
-      <div className="space-y-1">
-        {display.map((interaction) => (
-          <InteractionEntry
-            key={interaction.interaction_id}
-            interaction={interaction}
-            onClick={() => onInteractionClick(interaction.interaction_id)}
-          />
-        ))}
-      </div>
+    <div style={{ fontFamily: 'Tahoma, MS Sans Serif, sans-serif', fontSize: 11 }}>
+      {display.map((interaction) => (
+        <InteractionEntry
+          key={interaction.interaction_id}
+          interaction={interaction}
+          onClick={() => onInteractionClick(interaction.interaction_id)}
+        />
+      ))}
+
       {remaining > 0 && !showAll && (
-        <button onClick={() => setShowAll(true)} className="text-[10px] text-blue-600 hover:underline mt-1">
+        <button
+          onClick={() => setShowAll(true)}
+          className="win2k-btn"
+          style={{ marginTop: 4, fontSize: 10 }}
+        >
           {t.activity.showMore(remaining)}
         </button>
       )}
+
       {interactions.length === 0 && (
-        <div className="text-xs text-gray-400 italic py-2">{t.activity.noInteractions}</div>
+        <div
+          style={{
+            fontSize: 11,
+            color: '#808080',
+            fontStyle: 'italic',
+            padding: '6px 4px',
+          }}
+        >
+          {t.activity.noInteractions}
+        </div>
       )}
     </div>
   );

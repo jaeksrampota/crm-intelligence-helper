@@ -5,8 +5,21 @@ import { MiniProgressBar } from '../shared/MiniProgressBar';
 import { RelativeDate } from '../shared/RelativeDate';
 import { formatCZK } from '../../utils/format';
 import { isWithinDays } from '../../utils/date-helpers';
-import { cn } from '../../utils/cn';
 import { useTranslation } from '../../i18n';
+
+const WIN_CARD: React.CSSProperties = {
+  background: '#d4d0c8',
+  borderTop: '2px solid #ffffff',
+  borderLeft: '2px solid #ffffff',
+  borderRight: '2px solid #808080',
+  borderBottom: '2px solid #808080',
+  outline: '1px solid #404040',
+  padding: '5px 7px',
+  cursor: 'pointer',
+  fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+  fontSize: 11,
+  marginBottom: 4,
+};
 
 export function DebitCardInsight({ product, onClick }: { product: Product; onClick: () => void }) {
   const p = product.key_params as DebitCardParams;
@@ -14,58 +27,75 @@ export function DebitCardInsight({ product, onClick }: { product: Product; onCli
   const { t } = useTranslation();
 
   return (
-    <div
-      onClick={onClick}
-      className="bg-white rounded-lg border border-gray-200 p-3 cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all"
-    >
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-1.5">
-          <CreditCard size={14} className="text-gray-600" />
-          <span className="text-xs font-semibold">{p.card_variant} {t.products.debit}</span>
+    <div onClick={onClick} style={WIN_CARD}>
+      {/* Title row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CreditCard size={13} style={{ color: '#404040' }} />
+          <span style={{ fontWeight: 'bold' }}>{p.card_variant} {t.products.debit}</span>
         </div>
         <StatusIndicator status={product.status} />
       </div>
 
-      <div className="text-[10px] text-gray-500 mb-1.5">
+      {/* Card number & expiry */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderTop: '1px solid #808080',
+          borderLeft: '1px solid #808080',
+          borderRight: '1px solid #ffffff',
+          borderBottom: '1px solid #ffffff',
+          padding: '2px 5px',
+          fontSize: 10,
+          color: '#444',
+          marginBottom: 4,
+        }}
+      >
         {p.card_number_masked}
-        <span className={cn('ml-2', expiryWarning ? 'text-red-600 font-medium' : '')}>
+        <span style={{ marginLeft: 8, color: expiryWarning ? '#c00000' : '#808080', fontWeight: expiryWarning ? 'bold' : 'normal' }}>
           {t.products.exp} {product.expiry_date}
         </span>
       </div>
 
-      <div className="text-xs text-gray-700 mb-1.5">
+      {/* Last tx */}
+      <div style={{ fontSize: 10, color: '#555', marginBottom: 5 }}>
         {t.products.last} {formatCZK(p.last_transaction_amount)} · {p.last_transaction_merchant}
         {p.last_transaction_date && (
-          <span className="text-gray-400 ml-1">
+          <span style={{ color: '#808080', marginLeft: 4 }}>
             <RelativeDate date={p.last_transaction_date} />
           </span>
         )}
       </div>
 
-      <div className="mb-1">
-        <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
-          <span>
-            {t.products.daily} {formatCZK(p.today_spend)} / {formatCZK(p.daily_limit)}
-          </span>
+      {/* Daily limit bar */}
+      <div style={{ marginBottom: 4 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#808080', marginBottom: 2 }}>
+          <span>{t.products.daily} {formatCZK(p.today_spend)} / {formatCZK(p.daily_limit)}</span>
         </div>
         <MiniProgressBar value={p.today_spend} max={p.daily_limit} />
       </div>
 
-      <div className="flex items-center gap-2.5 mt-2 pt-1.5 border-t border-gray-100">
-        <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500" title="3D Secure">
-          {p.three_d_secure ? (
-            <ShieldCheck size={13} className="text-green-500" />
-          ) : (
-            <ShieldOff size={13} className="text-gray-300" />
-          )}
+      {/* Features row */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          marginTop: 4,
+          paddingTop: 4,
+          borderTop: '1px solid #808080',
+        }}
+      >
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, fontSize: 10 }}>
+          {p.three_d_secure ? <ShieldCheck size={12} style={{ color: '#008000' }} /> : <ShieldOff size={12} style={{ color: '#c0c0c0' }} />}
           {t.products.threeDS}
         </span>
-        <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500" title={p.apple_pay ? 'Apple Pay active' : 'No Apple Pay'}>
-          <Smartphone size={13} className={p.apple_pay ? 'text-gray-700' : 'text-gray-300'} />
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, fontSize: 10 }}>
+          <Smartphone size={12} style={{ color: p.apple_pay ? '#404040' : '#c0c0c0' }} />
           {t.products.pay}
         </span>
         {p.declined_count_30d > 0 && (
-          <span className="text-[10px] text-red-600 font-semibold bg-red-50 px-1.5 py-0.5 rounded-full border border-red-200">
+          <span style={{ fontSize: 10, fontWeight: 'bold', color: '#c00000', background: '#ffeeee', padding: '1px 5px', border: '1px solid #cc0000' }}>
             {t.products.declined(p.declined_count_30d)}
           </span>
         )}

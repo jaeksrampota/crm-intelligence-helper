@@ -6,7 +6,34 @@ export function AlertsBar({ alerts, onDismiss, onNavigate }: { alerts: Alert[]; 
   if (visible.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2 flex flex-wrap gap-2 items-center">
+    <div
+      style={{
+        background: '#d4d0c8',
+        borderTop: '2px solid #ffffff',
+        borderLeft: '2px solid #ffffff',
+        borderRight: '2px solid #404040',
+        borderBottom: '2px solid #404040',
+        outline: '1px solid #000',
+        padding: '4px 8px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 6,
+        alignItems: 'center',
+      }}
+    >
+      <span
+        style={{
+          fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+          fontSize: 11,
+          fontWeight: 'bold',
+          color: '#000',
+          marginRight: 4,
+          paddingRight: 8,
+          borderRight: '1px solid #808080',
+        }}
+      >
+        Alerts:
+      </span>
       {visible.map((alert) => (
         <AlertChip
           key={alert.id}

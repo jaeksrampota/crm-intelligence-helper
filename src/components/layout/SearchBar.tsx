@@ -32,15 +32,41 @@ export function SearchBar({ onSelectClient, selectedClientName, onClear }: Searc
     setQuery('');
   };
 
+  const insetStyle: React.CSSProperties = {
+    background: '#ffffff',
+    borderTop: '2px solid #808080',
+    borderLeft: '2px solid #808080',
+    borderRight: '2px solid #ffffff',
+    borderBottom: '2px solid #ffffff',
+    outline: '1px solid #404040',
+    display: 'flex',
+    alignItems: 'center',
+    minWidth: 240,
+    maxWidth: 360,
+  };
+
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-md">
-      <div className="flex items-center bg-white border border-gray-300 rounded-lg shadow-sm focus-within:border-rb-yellow focus-within:ring-1 focus-within:ring-rb-yellow">
-        <Search size={16} className="ml-3 text-gray-400" />
+    <div ref={wrapperRef} style={{ position: 'relative', width: '100%', maxWidth: 360 }}>
+      <div style={insetStyle}>
+        <Search size={14} style={{ marginLeft: 6, color: '#808080', flexShrink: 0 }} />
         {selectedClientName ? (
-          <div className="flex items-center gap-2 px-3 py-2 flex-1">
-            <span className="text-sm font-medium">{selectedClientName}</span>
-            <button onClick={onClear} className="p-0.5 hover:bg-gray-100 rounded">
-              <X size={14} className="text-gray-400" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 6px', flex: 1 }}>
+            <span style={{ fontFamily: 'Tahoma, sans-serif', fontSize: 11, fontWeight: 600 }}>{selectedClientName}</span>
+            <button
+              onClick={onClear}
+              style={{
+                background: '#d4d0c8',
+                borderTop: '1px solid #ffffff',
+                borderLeft: '1px solid #ffffff',
+                borderRight: '1px solid #808080',
+                borderBottom: '1px solid #808080',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                padding: 1,
+              }}
+            >
+              <X size={12} />
             </button>
           </div>
         ) : (
@@ -53,30 +79,81 @@ export function SearchBar({ onSelectClient, selectedClientName, onClear }: Searc
             }}
             onFocus={() => setShowDropdown(true)}
             placeholder={t.search.placeholder}
-            className="w-full px-3 py-2 text-sm bg-transparent outline-none"
+            style={{
+              width: '100%',
+              padding: '3px 6px',
+              fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+              fontSize: 11,
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: '#000',
+            }}
           />
         )}
       </div>
 
       {showDropdown && query.trim() && (
-        <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-30 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150">
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            width: '100%',
+            background: '#ffffff',
+            borderTop: '1px solid #808080',
+            borderLeft: '2px solid #808080',
+            borderRight: '2px solid #ffffff',
+            borderBottom: '2px solid #ffffff',
+            outline: '1px solid #404040',
+            zIndex: 30,
+            maxHeight: 220,
+            overflowY: 'auto',
+            boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+          }}
+        >
           {isSearching ? (
-            <div className="px-3 py-3 text-xs text-gray-400 flex items-center gap-2">
-              <div className="w-3 h-3 border-2 border-gray-300 border-t-rb-yellow rounded-full animate-spin" />
+            <div style={{ padding: '6px 8px', fontFamily: 'Tahoma, sans-serif', fontSize: 11, color: '#808080', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div
+                style={{
+                  width: 12,
+                  height: 12,
+                  border: '2px solid #d4d0c8',
+                  borderTopColor: '#0a246a',
+                  borderRadius: '50%',
+                  animation: 'spin 0.8s linear infinite',
+                }}
+              />
               {t.search.searching}
             </div>
           ) : results.length === 0 ? (
-            <div className="px-3 py-3 text-xs text-gray-400">{t.search.noResults(query)}</div>
+            <div style={{ padding: '6px 8px', fontFamily: 'Tahoma, sans-serif', fontSize: 11, color: '#808080' }}>
+              {t.search.noResults(query)}
+            </div>
           ) : (
             results.map((client) => (
               <button
                 key={client.client_id}
                 onClick={() => handleSelect(client.client_id)}
-                className="w-full text-left px-3 py-2.5 hover:bg-gray-50 flex items-center gap-2 transition-colors border-b border-gray-50 last:border-b-0"
+                className="win2k-listitem"
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '3px 6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontFamily: 'Tahoma, sans-serif',
+                  fontSize: 11,
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'default',
+                  borderBottom: '1px solid #e0e0e0',
+                }}
               >
-                <span className="text-sm font-medium">{client.name}</span>
+                <span style={{ fontWeight: 600 }}>{client.name}</span>
                 <SegmentBadge segment={client.segment} />
-                <span className="text-[10px] text-gray-400 ml-auto">{client.client_id}</span>
+                <span style={{ fontSize: 10, color: '#808080', marginLeft: 'auto' }}>{client.client_id}</span>
               </button>
             ))
           )}

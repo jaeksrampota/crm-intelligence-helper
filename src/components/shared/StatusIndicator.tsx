@@ -1,25 +1,35 @@
-import { cn } from '../../utils/cn';
 import type { ProductStatus } from '../../types';
 import { useTranslation } from '../../i18n';
 
-const DOT_STYLES: Record<ProductStatus, string> = {
-  active: 'bg-green-500',
-  closed: 'bg-gray-400',
-  suspended: 'bg-red-500',
+const DOT_COLOR: Record<ProductStatus, string> = {
+  active: '#006400',
+  closed: '#808080',
+  suspended: '#cc0000',
 };
 
-const TEXT_STYLES: Record<ProductStatus, string> = {
-  active: 'text-green-700',
-  closed: 'text-gray-500',
-  suspended: 'text-red-700',
+const TEXT_COLOR: Record<ProductStatus, string> = {
+  active: '#006400',
+  closed: '#808080',
+  suspended: '#cc0000',
 };
 
 export function StatusIndicator({ status }: { status: ProductStatus }) {
   const { t } = useTranslation();
   return (
-    <span className="inline-flex items-center gap-1">
-      <span className={cn('w-1.5 h-1.5 rounded-full', DOT_STYLES[status])} />
-      <span className={cn('text-xs font-medium', TEXT_STYLES[status])}>{t.status[status]}</span>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+      <span
+        style={{
+          width: 7,
+          height: 7,
+          borderRadius: '50%',
+          background: DOT_COLOR[status],
+          border: '1px solid rgba(0,0,0,0.3)',
+          display: 'inline-block',
+        }}
+      />
+      <span style={{ fontSize: 10, fontWeight: 'bold', color: TEXT_COLOR[status], fontFamily: 'Tahoma, sans-serif' }}>
+        {t.status[status]}
+      </span>
     </span>
   );
 }

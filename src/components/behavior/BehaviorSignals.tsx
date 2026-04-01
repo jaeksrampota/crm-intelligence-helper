@@ -1,4 +1,3 @@
-import { cn } from '../../utils/cn';
 import type { BehavioralSignalsSummary, SatisfactionScore } from '../../types';
 import { ChannelPreference } from './ChannelPreference';
 import { BalanceTrend } from './BalanceTrend';
@@ -22,41 +21,66 @@ export function BehaviorSignals({ signals, satisfactionScores, onTileClick, onSa
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
 
   const npsColor = latestNps
-    ? latestNps.score >= 9 ? 'text-green-600' : latestNps.score >= 7 ? 'text-amber-600' : 'text-red-600'
-    : 'text-gray-400';
+    ? latestNps.score >= 9 ? '#006400' : latestNps.score >= 7 ? '#cc7700' : '#c00000'
+    : '#808080';
+
+  const TILE_STYLE: React.CSSProperties = {
+    fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+    fontSize: 11,
+  };
 
   return (
-    <div className="space-y-1 overflow-y-auto">
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t.behavior.title}</h2>
-      <div className="grid grid-cols-2 gap-2">
-        <div className="col-span-2">
-          <ChannelPreference channels={signals.channel_preference} onClick={onTileClick ? () => onTileClick('channel_preference') : undefined} />
-        </div>
+    <div style={TILE_STYLE}>
+      {/* Channel preference — full width */}
+      <div style={{ marginBottom: 4 }}>
+        <ChannelPreference channels={signals.channel_preference} onClick={onTileClick ? () => onTileClick('channel_preference') : undefined} />
+      </div>
+
+      {/* 2-column grid for smaller tiles */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
         <BalanceTrend trend={signals.balance_trend} pct={signals.balance_trend_pct} onClick={onTileClick ? () => onTileClick('balance_trend') : undefined} />
         <InternationalActivity active={signals.has_international_activity} count={signals.international_tx_count} onClick={onTileClick ? () => onTileClick('international_activity') : undefined} />
         <DigitalEngagement level={signals.digital_engagement} loginCount={signals.login_count_30d} onClick={onTileClick ? () => onTileClick('digital_engagement') : undefined} />
         <OnlineShoppingPattern active={signals.has_online_shopping} count={signals.online_shopping_count} onClick={onTileClick ? () => onTileClick('online_shopping') : undefined} />
-        {satisfactionScores && satisfactionScores.length > 0 && (
-          <div
-            onClick={onSatisfactionClick}
-            className={cn(
-              'col-span-2 bg-white rounded-lg border border-gray-200 p-2.5',
-              onSatisfactionClick && 'cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all',
-            )}
-          >
-            <div className="text-[10px] text-gray-500 font-medium mb-1">{t.satisfaction.title}</div>
-            <div className="flex items-center justify-center gap-3">
-              <div className="text-center">
-                <div className={cn('text-lg font-bold', npsColor)}>{latestNps?.score ?? '—'}</div>
-                <div className="text-[9px] text-gray-400">{t.satisfaction.latestNps}</div>
-              </div>
-              <div className="text-[10px] text-gray-400">
-                {satisfactionScores.length} {satisfactionScores.length === 1 ? t.satisfaction.survey : t.satisfaction.surveys}
-              </div>
+      </div>
+
+      {/* Satisfaction score — full width */}
+      {satisfactionScores && satisfactionScores.length > 0 && (
+        <div
+          onClick={onSatisfactionClick}
+          style={{
+            marginTop: 4,
+            background: '#d4d0c8',
+            borderTop: '2px solid #ffffff',
+            borderLeft: '2px solid #ffffff',
+            borderRight: '2px solid #808080',
+            borderBottom: '2px solid #808080',
+            outline: '1px solid #404040',
+            padding: '5px 7px',
+            cursor: onSatisfactionClick ? 'pointer' : 'default',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 10, fontWeight: 'bold', marginBottom: 4 }}>{t.satisfaction.title}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 'bold', color: npsColor }}>{latestNps?.score ?? '—'}</div>
+              <div style={{ fontSize: 9, color: '#808080' }}>{t.satisfaction.latestNps}</div>
+            </div>
+            <div
+              style={{
+                width: 1,
+                height: 28,
+                background: '#808080',
+                boxShadow: '1px 0 0 #ffffff',
+              }}
+            />
+            <div style={{ fontSize: 10, color: '#808080' }}>
+              {satisfactionScores.length} {satisfactionScores.length === 1 ? t.satisfaction.survey : t.satisfaction.surveys}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

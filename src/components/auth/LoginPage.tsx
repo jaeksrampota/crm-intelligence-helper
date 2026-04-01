@@ -16,57 +16,144 @@ export function LoginPage({ onLogin, error }: LoginPageProps) {
     onLogin(username, password);
   };
 
+  const insetInput: React.CSSProperties = {
+    width: '100%',
+    background: '#ffffff',
+    borderTop: '2px solid #808080',
+    borderLeft: '2px solid #808080',
+    borderRight: '2px solid #ffffff',
+    borderBottom: '2px solid #ffffff',
+    outline: '1px solid #404040',
+    padding: '3px 6px',
+    fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+    fontSize: 11,
+    color: '#000',
+    boxSizing: 'border-box' as const,
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-          <div className="flex flex-col items-center gap-3 mb-8">
-            <img
-              src={import.meta.env.BASE_URL + 'rb-icon.svg'}
-              alt="Raiffeisenbank"
-              className="w-12 h-12"
-            />
-            <h1 className="text-lg font-bold text-gray-800">{t.app.title}</h1>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#008080',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      {/* Win2k dialog window */}
+      <div
+        style={{
+          background: '#d4d0c8',
+          borderTop: '2px solid #ffffff',
+          borderLeft: '2px solid #ffffff',
+          borderRight: '2px solid #404040',
+          borderBottom: '2px solid #404040',
+          outline: '1px solid #000',
+          width: 300,
+          fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+          fontSize: 11,
+        }}
+      >
+        {/* Title bar */}
+        <div
+          style={{
+            background: 'linear-gradient(to right, #0a246a, #a6caf0)',
+            color: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: 11,
+            padding: '3px 6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            userSelect: 'none',
+          }}
+        >
+          <img src={import.meta.env.BASE_URL + 'rb-icon.svg'} alt="" style={{ width: 14, height: 14 }} />
+          {t.app.title} — {t.login.submit}
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: 16 }}>
+          {/* Logo */}
+          <div style={{ textAlign: 'center', marginBottom: 14 }}>
+            <img src={import.meta.env.BASE_URL + 'rb-logo.svg'} alt="Raiffeisenbank" style={{ height: 36, display: 'inline-block' }} />
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label htmlFor="username" className="block text-xs font-medium text-gray-600 mb-1">
-                {t.login.username}
+          {/* Separator */}
+          <div style={{ height: 1, background: '#808080', boxShadow: '0 1px 0 #ffffff', marginBottom: 14 }} />
+
+          <form onSubmit={handleSubmit}>
+            {/* Username */}
+            <div style={{ marginBottom: 10 }}>
+              <label
+                htmlFor="username"
+                style={{ display: 'block', marginBottom: 3, fontSize: 11, fontWeight: 'bold' }}
+              >
+                {t.login.username}:
               </label>
               <input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rb-yellow focus:border-transparent"
+                style={insetInput}
                 autoFocus
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-xs font-medium text-gray-600 mb-1">
-                {t.login.password}
+            {/* Password */}
+            <div style={{ marginBottom: 14 }}>
+              <label
+                htmlFor="password"
+                style={{ display: 'block', marginBottom: 3, fontSize: 11, fontWeight: 'bold' }}
+              >
+                {t.login.password}:
               </label>
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rb-yellow focus:border-transparent"
+                style={insetInput}
               />
             </div>
 
+            {/* Error */}
             {error && (
-              <p className="text-xs text-red-600 text-center">{t.login.error}</p>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: '#c00000',
+                  background: '#ffeeee',
+                  border: '1px solid #cc0000',
+                  padding: '3px 6px',
+                  marginBottom: 10,
+                  textAlign: 'center',
+                }}
+              >
+                {t.login.error}
+              </div>
             )}
 
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-rb-yellow text-rb-black font-semibold text-sm rounded-lg hover:brightness-95 transition-all"
-            >
-              {t.login.submit}
-            </button>
+            {/* Separator */}
+            <div style={{ height: 1, background: '#808080', boxShadow: '0 1px 0 #ffffff', marginBottom: 10 }} />
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+              <button type="submit" className="win2k-btn" style={{ minWidth: 80, justifyContent: 'center' }}>
+                {t.login.submit}
+              </button>
+              <button
+                type="button"
+                className="win2k-btn"
+                style={{ minWidth: 80, justifyContent: 'center' }}
+                onClick={() => { setUsername(''); setPassword(''); }}
+              >
+                {t.login.logout}
+              </button>
+            </div>
           </form>
         </div>
       </div>

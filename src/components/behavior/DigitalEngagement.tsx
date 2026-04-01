@@ -1,11 +1,22 @@
-import { cn } from '../../utils/cn';
 import type { EngagementLevel } from '../../types';
 import { useTranslation } from '../../i18n';
 
+const WIN_TILE: React.CSSProperties = {
+  background: '#d4d0c8',
+  borderTop: '2px solid #ffffff',
+  borderLeft: '2px solid #ffffff',
+  borderRight: '2px solid #808080',
+  borderBottom: '2px solid #808080',
+  outline: '1px solid #404040',
+  padding: '5px 7px',
+  fontFamily: 'Tahoma, MS Sans Serif, sans-serif',
+  fontSize: 11,
+};
+
 const LEVEL_COLORS: Record<EngagementLevel, [string, string, string]> = {
-  low: ['bg-red-400', 'bg-gray-200', 'bg-gray-200'],
-  medium: ['bg-amber-400', 'bg-amber-400', 'bg-gray-200'],
-  high: ['bg-green-400', 'bg-green-400', 'bg-green-400'],
+  low: ['#cc0000', '#d4d0c8', '#d4d0c8'],
+  medium: ['#cc7700', '#cc7700', '#d4d0c8'],
+  high: ['#006400', '#006400', '#006400'],
 };
 
 export function DigitalEngagement({ level, loginCount, onClick }: { level: EngagementLevel; loginCount: number; onClick?: () => void }) {
@@ -18,16 +29,27 @@ export function DigitalEngagement({ level, loginCount, onClick }: { level: Engag
   };
 
   return (
-    <div onClick={onClick} className={cn('bg-white rounded-lg border border-gray-200 p-2.5', onClick && 'cursor-pointer hover:border-rb-yellow hover:shadow-sm transition-all')}>
-      <div className="text-[10px] text-gray-500 font-medium mb-1.5">{t.behavior.digitalEngagement}</div>
-      <div className="flex flex-col items-center gap-1">
-        <div className="flex gap-1">
+    <div onClick={onClick} style={{ ...WIN_TILE, cursor: onClick ? 'pointer' : 'default' }}>
+      <div style={{ fontSize: 10, fontWeight: 'bold', marginBottom: 6, color: '#000' }}>{t.behavior.digitalEngagement}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+        <div style={{ display: 'flex', gap: 3 }}>
           {colors.map((color, i) => (
-            <div key={i} className={cn('w-6 h-2.5 rounded-sm', color)} />
+            <div
+              key={i}
+              style={{
+                width: 18,
+                height: 10,
+                background: color,
+                borderTop: '1px solid #ffffff',
+                borderLeft: '1px solid #ffffff',
+                borderRight: '1px solid #808080',
+                borderBottom: '1px solid #808080',
+              }}
+            />
           ))}
         </div>
-        <div className="text-xs font-semibold">{labelMap[level]}</div>
-        <div className="text-[10px] text-gray-400">{t.behavior.logins30d(loginCount)}</div>
+        <div style={{ fontSize: 11, fontWeight: 'bold' }}>{labelMap[level]}</div>
+        <div style={{ fontSize: 10, color: '#808080' }}>{t.behavior.logins30d(loginCount)}</div>
       </div>
     </div>
   );
